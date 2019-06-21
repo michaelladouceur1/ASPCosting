@@ -6,35 +6,6 @@ import time
 spacing = '   '
 divider = '   ---------------'
 
-# TEMPLATE MENU ITEMS
-
-# def list(choices):
-#     params = {
-#         'type': 'list',
-#         'name': 'list',
-#         'message': '',
-#         'choices': choices
-#     }
-#     answers = prompt(params, style=style_1)
-#     return answers['list']
-
-# def checkbox(choices):
-#     choicesMod = []
-#     for choice in choices:
-#         if choice[0] == '-':
-#             choicesMod.append(Separator(f'--{choice[1:]}--'))
-#         else:
-#             choicesMod.append({'name': choice})
-#     params = {
-#         'type': 'checkbox',
-#         'name': 'checkbox',
-#         'qmark': 'x',
-#         'message': '',
-#         'choices': choicesMod
-#     }
-#     answers = prompt(params, style=style_1)
-#     return answers['checkbox']
-
 # UTILITIES
 
 def clear():
@@ -45,6 +16,23 @@ def error_message(error):
     time.sleep(4)
     return main_menu()
 
+routeElements = {
+    'mainMenu': 'MAIN MENU',
+    'newCosting': 'NEW COSTING',
+    'viewCosting': 'VIEW COSTING',
+    'editCosting': 'EDIT COSTING',
+    'analytics': 'ANALYTICS',
+    'costPart': 'COST PART',
+    'costProductAssembly': 'COST PRODUCT ASSEMBLY',
+    'costProductFamily': 'COST PRODUCT FAMILY',
+    'returnMainMenu': 'RETURN TO MAIN MENU'
+}
+
+inputElements = {
+    'materialType': ['SHEET METAL', 'BAR STOCK'],
+    'material': ['HR STEEL', 'CR STEEL', 'STAINLESS']
+}
+
 # VIEWS
 
 class View:
@@ -53,40 +41,63 @@ class View:
         self.version = version
         self.items = items
         self.version = version
-        self.answer = ''
-        self.functions = functions
+        self.answer = []
+        self.routes = {
+            routeElements['mainMenu']: main_menu,
+            routeElements['newCosting']: new_costing,
+            routeElements['viewCosting']: view_costing,
+            routeElements['costPart']: cost_part,
+            routeElements['costProductAssembly']: cost_product_assembly,
+            routeElements['costProductFamily']: cost_product_family,
+            routeElements['returnMainMenu']: main_menu
+        }
         self.render()
 
     def render(self):
         clear()
         print(f'{spacing}{self.title}')
         print(divider)
-        if self.version == 'list':
-            self.answer = self.list()
-        elif self.version == 'checkbox':
-            self.answer = self.checkbox()
-        renderChange()
+        index = 0
+        print(self.items)
+        for item in self.items:
+            if item['type'] == 'list':
+                self.answer.append(self.list(index))
+            elif item['type'] == 'checkbox':
+                self.answer.append(self.checkbox(index))
+            else:
+                print('ERROR')
+                continue
+            index += 1
+        if self.version == 'routing':
+            self.router()
+        elif self.version == 'input':
+            return self.answer
+        else:
+            return error_message(self.answer)
 
-    def renderChange(self):
-        for item, func in self.items, self.functions:
-            if item == self.answer:
-                return func
-        return error_message()
+    def router(self):
+        for key in self.routes:
+            if self.answer[0] == key:
+                return self.routes[key]()
+            else:
+                continue
+        return error_message(self.answer)
 
+    # TEMPLATE MENU ITEMS
 
-    def list(self):
+    def list(self, index):
         params = {
             'type': 'list',
             'name': 'list',
             'message': '',
-            'choices': self.items
+            'choices': self.items[index]['elements']
         }
         answers = prompt(params, style=style_1)
         return answers['list']
 
-    def checkbox(self):
+    def checkbox(self, index):
         itemsMod = []
-        for choice in self.items:
+        for choice in self.items[index]['elements']:
             if choice[0] == '-':
                 itemsMod.append(Separator(f'--{choice[1:]}--'))
             else:
@@ -104,67 +115,47 @@ class View:
 
 #### LEVEL 1 ####
 def main_menu():
-    # clear()
-    # print(f'{spacing}ASP COSTING MODULE')
-    # print(divider)
-    # answer = list(
-    #     ['NEW COSTING', 'VIEW COSTING', 'EDIT COSTING', 'ANALYTICS']
-    #     )
 
-    # clear()
-    v = View(title='ASP COSTING MODULE', version='list', items=[
-        'NEW COSTING', 'VIEW COSTING', 'EDIT COSTING', 'ANALYTICS'
-        ], functions=[
-        new_costing(), view_costing()
-        ])
-
-    # if v.answer == 'NEW COSTING':
-    #     return new_costing()
-    # elif v.answer == 'VIEW COSTING':
-    #     return view_costing()
-    # else:
-    #     return error_message(answer)
+    v = View(title='ASP COSTING MODULE', version='routing', 
+            items=[{'type': 'list',
+                    'elements': [routeElements['newCosting'], routeElements['viewCosting'], routeElements['editCosting'], routeElements['analytics']]}])
 
 #### LEVEL 2 ####
 
 def new_costing():
-    v = View(title='NEW COSTING MENU', version='list', items=[
-        'COST PART', 'COST PRODUCT ASSEMBLY', 'COST PRODUCT FAMILY', 'RETURN TO MAIN MENU'
-        ], functions=[
-        cost_part(), cost_product_assembly(), cost_product_family(), main_menu()
-        ])
 
-    # print(f'{spacing}NEW COSTING MENU')
-    # print(divider)
-    # answer = list(
-    #     ['COST PART', 'COST PRODUCT ASSEMBLY', 'COST PRODUCT FAMILY', 'RETURN TO MAIN MENU']
-    #     )
-
-    # clear()
-
-    # if answer == 'COST PART':
-    #     return cost_part()
-    # elif answer == 'COST PRODUCT ASSEMBLY':
-    #     return cost_product_assembly()
-    # elif answer == 'COST PRODUCT FAMILY':
-    #     return cost_product_family()
-    # elif answer == 'RETURN TO MAIN MENU':
-    #     return main_menu()
-    # else:
-    #     return error_message()
-
+    v = View(title='NEW COSTING MENU', version='routing', 
+            items=[{'type': 'list',
+                    'elements': [routeElements['costPart'], routeElements['costProductAssembly'], routeElements['costProductAssembly'], routeElements['analytics']]}])
 
 def view_costing():
-    print(f'{spacing}VIEW COSTING MENU')
+
+    v = View(title='VIEW COSTING MENU', version='routing', 
+            items=[{'type': 'list',
+                    'elements': ['COST PART', 'COST PRODUCT ASSEMBLY', 'COST PRODUCT FAMILY', 'RETURN TO MAIN MENU']}])
+
+def edit_costing():
+
+    v = View(title='EDIT COSTING MENU', version='routing', 
+            items=[{'type': 'list',
+                    'elements': ['COST PART', 'COST PRODUCT ASSEMBLY', 'COST PRODUCT FAMILY', 'RETURN TO MAIN MENU']}])
+
+def analytics():
+
+    v = View(title='ANALYTICS MENU', version='routing', 
+            items=[{'type': 'list',
+                    'elements': ['COST PART', 'COST PRODUCT ASSEMBLY', 'COST PRODUCT FAMILY', 'RETURN TO MAIN MENU']}])
 
 #### LEVEL 3 ####
 
 def cost_part():
-    print(f'{spacing}PART COST MENU')
-    print(divider)
-    # answer = checkbox(
-    #     ['-HELLO', 'STUFF', 'MORE STUFF']
-    #     )
+
+    v = View(title='PART COST MENU', version='input', 
+        items=[{'type': 'list', 'name': 'materialType',
+                'elements': inputElements['materialType']},
+                {'type': 'list', 'name': 'material',
+                'elements': inputElements['material']}])
+    print(v.answer)
 
 def cost_product_assembly():
     print(f'{spacing}PRODUCT ASSEMBLY COST MENU')
