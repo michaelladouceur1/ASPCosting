@@ -1,106 +1,81 @@
-from __future__ import print_function, unicode_literals
+from mongoengine import *
 
-from pprint import pprint
+connect('asp-costing', host='localhost', port=27017)
 
-from PyInquirer import style_from_dict, Token, prompt, Separator
+# EMBEDDED DOCUMENTS
 
-from examples import custom_style_2
+class StandardsMaterial(EmbeddedDocument):
+	materialType = StringField(required=True)
+	materialName = StringField(required=True)
+	materialDensity = DecimalField(required=True)
 
+class StandardsGauge(EmbeddedDocument):
+    gauge = StringField(required=True)
+    thickness = DecimalField(required=True)
 
-questions = [
-    {
-        'type': 'checkbox',
-        'qmark': '😃',
-        'message': 'Select toppings',
-        'name': 'toppings',
-        'choices': [ 
-            Separator('= The Meats ='),
-            {
-                'name': 'Ham'
-            },
-            {
-                'name': 'Ground Meat'
-            },
-            {
-                'name': 'Bacon'
-            },
-            Separator('= The Cheeses ='),
-            {
-                'name': 'Mozzarella',
-                'checked': True
-            },
-            {
-                'name': 'Cheddar'
-            },
-            {
-                'name': 'Parmesan'
-            },
-            Separator('= The usual ='),
-            {
-                'name': 'Mushroom'
-            },
-            {
-                'name': 'Tomato'
-            },
-            {
-                'name': 'Pepperoni'
-            },
-            Separator('= The extras ='),
-            {
-                'name': 'Pineapple'
-            },
-            {
-                'name': 'Olives',
-                'disabled': 'out of stock'
-            },
-            {
-                'name': 'Extra cheese'
-            }
-        ],
-        'validate': lambda answer: 'You must choose at least one topping.' \
-            if len(answer) == 0 else True
-    }
-]
+class ProcessForPart(EmbeddedDocument):
+	processCategory = StringField(required=True)
+	setupTime = DecimalField()
+	operationNumber = IntField(required=True)
+	timePerOperation = DecimalField(required=True)
+	workCenter = IntField()
 
-def get_delivery_options(answers):
-    options = ['bike', 'car', 'truck']
-    if answers['size'] == 'jumbo':
-        options.append('helicopter')
-    return options
+# DOCUMENTS
 
+class Standards(Document):
+	materialType = ListField(StringField())
+	material = ListField(EmbeddedDocumentField(StandardsMaterial))
+	gauge = ListField(EmbeddedDocumentField(StandardsGauge))
 
-questions2 = [
-    {
-        'type': 'list',
-        'name': 'theme',
-        'message': 'What do you want to do?',
-        'choices': [
-            'Order a pizza',
-            'Make a reservation',
-            Separator(),
-            'Ask for opening hours',
-            {
-                'name': 'Contact support',
-                'disabled': 'Unavailable at this time'
-            },
-            'Talk to the receptionist'
-        ]
-    },
-    {
-        'type': 'list',
-        'name': 'size',
-        'message': 'What size do you need?',
-        'choices': ['Jumbo', 'Large', 'Standard', 'Medium', 'Small', 'Micro'],
-        'filter': lambda val: val.lower()
-    },
-    {
-        'type': 'list',
-        'name': 'delivery',
-        'message': 'Which vehicle you want to use for delivery?',
-        'choices': get_delivery_options,
-    },
-]
+class Part(Document):
+	partNumber = StringField(required=True, max_length=50)
+	materialType = StringField(required=True)
+	material = StringField(required=True)
+	gauge = StringField()
+	thickness = DecimalField()
+	blankHeight = DecimalField()
+	blankWidth = DecimalField()
+	processes = ListField(EmbeddedDocumentField(ProcessForPart))
 
-answers = prompt(questions, style=custom_style_2)
-answers2 = prompt(questions2, style=custom_style_2)
-pprint(answers, answers2)
+# process = ProcessForPart(
+# 	processCategory = 'Press Brake',
+# 	operationNumber = 4,
+# 	timePerOperation = 0.1
+# )
+	
+# part = Part(
+# 	partNumber = 'EE302030.40',
+# 	materialType = 'Sheet Metal',
+# 	material = 'Carbon Steel',
+# 	gauge = '18 GA',
+# 	thickness = 0.048,
+# 	blankHeight = 40,
+# 	blankWidth = 20,
+# 	processes = [process]
+# )
+
+material = StandardsMaterial(
+    materialType = 'sheet metal',
+    materialName = 'carbon steel',
+    materialDensity = 4000
+)
+
+gauge1 = StandardsGauge(
+    gauge = '18 GA',
+    thickness = 0.048
+)
+
+gauge2 = StandardsGauge(
+    gauge = '16 GA',
+    thickness = 0.06
+)
+
+standards = Standards(
+    materialType = ['sheet metal', 'bar stock'],
+    material = [material],
+    gauge = [gauge1, gauge2]
+)
+
+standards.save()
+
+print('Database Contacted')

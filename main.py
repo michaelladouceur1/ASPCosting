@@ -10,6 +10,7 @@ divider = '   ---------------'
 
 def clear():
     system('cls')
+    system('clear')
 
 def error_message(error):
     print(f'AN ERROR OCCURRED ACCESSING "{error}". RETURNING TO MAIN MENU')
