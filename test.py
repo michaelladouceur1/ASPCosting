@@ -1,81 +1,53 @@
-from mongoengine import *
+class tc():
 
-connect('asp-costing', host='localhost', port=27017)
+	def raiseError(mode, input):
+		raise Exception(f'The input ({input}) is not equal to a {mode}')
 
-# EMBEDDED DOCUMENTS
+	def verify(mode, input):
+		if type(input) == mode:
+			pass
+		else:
+			tc.raiseError(mode, input)
 
-class StandardsMaterial(EmbeddedDocument):
-	materialType = StringField(required=True)
-	materialName = StringField(required=True)
-	materialDensity = DecimalField(required=True)
+	def check(mode=any, input=[]):
+		if type(input) == list:
+			if len(input) > 0:
+				for i in input:
+					tc.verify(mode=mode, input=i)
+		else:
+			tc.verify(mode=mode, input=input)
 
-class StandardsGauge(EmbeddedDocument):
-    gauge = StringField(required=True)
-    thickness = DecimalField(required=True)
+class Model():
+	def __init__(self):
+		self.material = {
+			'materialName': str,
+			'materialType': str,
+			'materialDensity': float
+		}
 
-class ProcessForPart(EmbeddedDocument):
-	processCategory = StringField(required=True)
-	setupTime = DecimalField()
-	operationNumber = IntField(required=True)
-	timePerOperation = DecimalField(required=True)
-	workCenter = IntField()
+model = Model()
+refModel = Model()
 
-# DOCUMENTS
+# model.material['materialName'] = ['carbon steel']
+# model.material['materialType'] = 'sheet metal'
+# model.material['materialDensity'] = 4000.0
 
-class Standards(Document):
-	materialType = ListField(StringField())
-	material = ListField(EmbeddedDocumentField(StandardsMaterial))
-	gauge = ListField(EmbeddedDocumentField(StandardsGauge))
+# if len(model.material) > 0:
+# 	for item in model.material:
+# 		mode = refModel.material[item]
+# 		input = model.material[item]
+# 		print(mode)
+# 		print(input)
+# 		tc.check(mode, input)
 
-class Part(Document):
-	partNumber = StringField(required=True, max_length=50)
-	materialType = StringField(required=True)
-	material = StringField(required=True)
-	gauge = StringField()
-	thickness = DecimalField()
-	blankHeight = DecimalField()
-	blankWidth = DecimalField()
-	processes = ListField(EmbeddedDocumentField(ProcessForPart))
+def vm(model, refModel, path):
+	refModel = f'{refModel}()'
+	for i in path:
+		refModel += f'.{i}'
+		print(refModel)
 
-# process = ProcessForPart(
-# 	processCategory = 'Press Brake',
-# 	operationNumber = 4,
-# 	timePerOperation = 0.1
-# )
-	
-# part = Part(
-# 	partNumber = 'EE302030.40',
-# 	materialType = 'Sheet Metal',
-# 	material = 'Carbon Steel',
-# 	gauge = '18 GA',
-# 	thickness = 0.048,
-# 	blankHeight = 40,
-# 	blankWidth = 20,
-# 	processes = [process]
-# )
+	result = eval(refModel)
+	print(result)
+	print(model.path)
 
-material = StandardsMaterial(
-    materialType = 'sheet metal',
-    materialName = 'carbon steel',
-    materialDensity = 4000
-)
-
-gauge1 = StandardsGauge(
-    gauge = '18 GA',
-    thickness = 0.048
-)
-
-gauge2 = StandardsGauge(
-    gauge = '16 GA',
-    thickness = 0.06
-)
-
-standards = Standards(
-    materialType = ['sheet metal', 'bar stock'],
-    material = [material],
-    gauge = [gauge1, gauge2]
-)
-
-standards.save()
-
-print('Database Contacted')
+vm(model, 'Model', ['material'])
