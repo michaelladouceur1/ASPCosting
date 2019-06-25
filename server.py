@@ -1,23 +1,32 @@
-from mongoengine import *
-from model import *
+import pymongo
+from pymongo import MongoClient
+from type_check import CheckType as ct
 
-# def update(document, item, value, mode):
-#     collection = document
-#     update = collection.objects[0]
-#     # eval(document.objects(id=update.id).update_one(mode+'__'+item=value))
-#     eval(f'{document}.objects(id={update}.id).update_one({mode}__{item}={str(value)})')
+class Server:
 
-# # update = Standards.objects[0]
-# # collection = Standards.objects
+    def __init__(self, db):
+        self.connect(db)
 
-# # collection(id=update.id).update_one(add_to_set__materialType='fabric')
+    def connect(self, db):
+        try:
+            connection = MongoClient()
+            print(f'Connected to MongoDB: {connection}')
+            self.db = connection[db]
+            print(f'Connected to Database: {self.db}')
+            # return db
+        except:
+            print(f'There was an issue connecting to the Database')
 
-# update(Standards, 'material', 'stainless', 'push')
+    def collection(self, coll):
+        collection = self.db[coll]
+        return collection
 
-def update(material):
-    update = Standards.objects[0]
-    Standards.objects.update(material)
+    def insert(self, coll, data):
+        collection = self.collection(coll)
+        collection.insert_one(data)
 
-update(StandardsMaterial(
-    materialName = 'stainless'
-))
+    def updateOne(self, coll, filterProperty, filterValue, action, target, updateValue):
+        collection = self.collection(coll)
+        collection.update_one(
+                            {f'{filterProperty}':f'{filterValue}'}, 
+                            {f'${action}': {f'{target}':f'{updateValue}'}})

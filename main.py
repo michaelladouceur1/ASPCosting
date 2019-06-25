@@ -18,15 +18,19 @@ def error_message(error):
     return main_menu()
 
 routeElements = {
+    # LEVEL 1
     'mainMenu': 'MAIN MENU',
+    # LEVEL 2
     'newCosting': 'NEW COSTING',
     'viewCosting': 'VIEW COSTING',
     'editCosting': 'EDIT COSTING',
     'analytics': 'ANALYTICS',
+    # LEVEL 3
     'costPart': 'COST PART',
     'costProductAssembly': 'COST PRODUCT ASSEMBLY',
     'costProductFamily': 'COST PRODUCT FAMILY',
-    'returnMainMenu': 'RETURN TO MAIN MENU'
+    'returnMainMenu': 'RETURN TO MAIN MENU',
+    'addWorkCenter': 'ADD WORK CENTER'
 }
 
 inputElements = {
@@ -47,10 +51,12 @@ class View:
             routeElements['mainMenu']: main_menu,
             routeElements['newCosting']: new_costing,
             routeElements['viewCosting']: view_costing,
+            routeElements['analytics']: analytics,
             routeElements['costPart']: cost_part,
             routeElements['costProductAssembly']: cost_product_assembly,
             routeElements['costProductFamily']: cost_product_family,
-            routeElements['returnMainMenu']: main_menu
+            routeElements['returnMainMenu']: main_menu,
+            routeElements['addWorkCenter']: add_work_center
         }
         self.render()
 
@@ -65,6 +71,8 @@ class View:
                 self.answer.append(self.list(index))
             elif item['type'] == 'checkbox':
                 self.answer.append(self.checkbox(index))
+            elif item['type'] == 'input':
+                self.answer = self.input(index)
             else:
                 print('ERROR')
                 continue
@@ -113,6 +121,15 @@ class View:
         answers = prompt(params, style=style_1)
         return answers['checkbox']
 
+    def input(self, index):
+        params = {
+            'type': 'input',
+            'name': 'input',
+            'message': self.items[index]['elements']
+        }
+        answers = prompt(params, style=style_1)
+        return answers['input']
+
 
 #### LEVEL 1 ####
 def main_menu():
@@ -145,7 +162,7 @@ def analytics():
 
     v = View(title='ANALYTICS MENU', version='routing', 
             items=[{'type': 'list',
-                    'elements': ['COST PART', 'COST PRODUCT ASSEMBLY', 'COST PRODUCT FAMILY', 'RETURN TO MAIN MENU']}])
+                    'elements': [routeElements['addWorkCenter'], 'RETURN TO MAIN MENU']}])
 
 #### LEVEL 3 ####
 
@@ -163,6 +180,11 @@ def cost_product_assembly():
 
 def cost_product_family():
     print(f'{spacing}PRODUCT FAMILY COST MENU')
+
+def add_work_center():
+    v = View(title='ADD PROCESS MENU', version='input',
+        items=[{'type': 'input', 'name': 'addProcess',
+                'elements': 'Work Center Number: '}])
 
 
 if __name__ == '__main__':

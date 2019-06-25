@@ -3,48 +3,15 @@ import pymongo
 from pymongo import MongoClient
 from typing import *
 
-def connectToDB():
-	try:
-		connection = MongoClient('mongodb+srv://Michael:b1ackb1rd@cluster0-ndgwg.mongodb.net/test?retryWrites=true&w=majority')
-		print(f'Connected to Database: {connection}')
-		return connection
-	except Error as er:
-		try:
-			connection = MongoClient()
-			print(f'Connected to Database: {connection}')
-		except Error as er:
-			print(f'There was an issue connecting to the Database: {er}')
-
-client = connectToDB()
-db = client['asp-costing']
-col = db['standards']
-
 class Model():
 	Standards: Dict = {
-		'materialType': List[str],
+		'materialType': [''],
 		'material': [{
 			'materialType': str,
 			'materialName': str,
 			'materialDensity': float
 		}]
 	}
-
-standards = Model()
-
-# standards.Standards = {
-# 	'materialType': [4000, 'bar stock'],
-# 	'material': [
-# 	{
-# 		'materialType': 'sheet metal',
-# 		'materialName': 'carbon steel',
-# 		'materialDensity': 4000
-# 	},
-# 	{
-# 		'materialType': 'bar stock',
-# 		'materialName': 'stainless',
-# 		'materialDensity': 4200
-# 	}]
-# }
 
 standards.Standards['material'][0]['materialType'] = 4000
 
