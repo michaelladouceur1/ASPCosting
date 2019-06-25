@@ -30,7 +30,8 @@ routeElements = {
     'costProductAssembly': 'COST PRODUCT ASSEMBLY',
     'costProductFamily': 'COST PRODUCT FAMILY',
     'returnMainMenu': 'RETURN TO MAIN MENU',
-    'addWorkCenter': 'ADD WORK CENTER'
+    'addWorkCenter': 'ADD WORK CENTER',
+    'addProcessCategory': 'ADD PROCESS CATEGORY'
 }
 
 inputElements = {
@@ -56,7 +57,8 @@ class View:
             routeElements['costProductAssembly']: cost_product_assembly,
             routeElements['costProductFamily']: cost_product_family,
             routeElements['returnMainMenu']: main_menu,
-            routeElements['addWorkCenter']: add_work_center
+            routeElements['addWorkCenter']: add_work_center,
+            routeElements['addProcessCategory']: add_proccess_category
         }
         self.render()
 
@@ -65,14 +67,15 @@ class View:
         print(f'{spacing}{self.title}')
         print(divider)
         index = 0
-        print(self.items)
         for item in self.items:
-            if item['type'] == 'list':
+            if item['type'] == 'print':
+                self.printData(index)
+            elif item['type'] == 'list':
                 self.answer.append(self.list(index))
             elif item['type'] == 'checkbox':
                 self.answer.append(self.checkbox(index))
             elif item['type'] == 'input':
-                self.answer = self.input(index)
+                self.answer.append(self.input(index))
             else:
                 print('ERROR')
                 continue
@@ -91,6 +94,10 @@ class View:
             else:
                 continue
         return error_message(self.answer)
+
+    def printData(self, index):
+        for data in self.items[index]['elements']:
+            print(f'{spacing}{data}')
 
     # TEMPLATE MENU ITEMS
 
@@ -162,7 +169,7 @@ def analytics():
 
     v = View(title='ANALYTICS MENU', version='routing', 
             items=[{'type': 'list',
-                    'elements': [routeElements['addWorkCenter'], 'RETURN TO MAIN MENU']}])
+                    'elements': [routeElements['addWorkCenter'], routeElements['addProcessCategory'], 'RETURN TO MAIN MENU']}])
 
 #### LEVEL 3 ####
 
@@ -183,8 +190,20 @@ def cost_product_family():
 
 def add_work_center():
     v = View(title='ADD PROCESS MENU', version='input',
-        items=[{'type': 'input', 'name': 'addProcess',
-                'elements': 'Work Center Number: '}])
+        items=[{'type': 'input', 'name': 'workCenterID',
+                'elements': 'WORK CENTER ID NUMBER: '},
+                {'type': 'list', 'name': 'workCenterCategory',
+                'elements': 'WORK CENTER ID NUMBER: '}])
+    print(v.answer)
+
+def add_proccess_category():
+    v = View(title='ADD PROCESS CATEGORY', version='input',
+        items=[{'type': 'print', 'name': 'processes',
+                'elements': ['Press Brake', 'Laser', 'Stamping']},
+                {'type': 'input', 'name': 'newProcess',
+                'elements': 'NEW PROCESS: '}])
+
+    print(v.answer)
 
 
 if __name__ == '__main__':

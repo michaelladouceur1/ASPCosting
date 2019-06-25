@@ -5,11 +5,26 @@ from typing import *
 
 class Model():
 	Standards: Dict = {
-		'materialType': [''],
+		'materialType': [str],
 		'material': [{
 			'materialType': str,
 			'materialName': str,
 			'materialDensity': float
+		}],
+		'processCategory': [{
+			'processCategoryName': str,
+			'averageRate': float,
+			'averageOverhead': float,
+			'averageTP': float,
+			'averageSetup': float
+		}],
+		'workCenter': [{
+			'ID': int,
+			'processCategory': str,
+			'hourlyRate': float,
+			'hourlyOverhead': float,
+			'estimatedTP': float,
+			'estimatedSetup': float
 		}]
 	}
 
