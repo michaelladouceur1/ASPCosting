@@ -14,7 +14,12 @@ class CheckType:
 			self.raiseError()
 
 	def check(self):
-		if type(self.input) == list:
+		if type(self.input) == list and type(self.mode) != list:
+			if len(self.input) > 0:
+				for i in self.input:
+					self.verify(i)
+		elif type(self.input) == list and type(self.mode) == list:
+			self.mode = self.mode[0]
 			if len(self.input) > 0:
 				for i in self.input:
 					self.verify(i)

@@ -203,7 +203,7 @@ def add_proccess_category():
                 {'type': 'input', 'name': 'newProcess',
                 'elements': 'NEW PROCESS: '}])
 
-    print(v.answer)
+    print(type(v.answer[0]))
 
 
 if __name__ == '__main__':

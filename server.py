@@ -3,7 +3,6 @@ from pymongo import MongoClient
 from type_check import CheckType as ct
 
 class Server:
-
     def __init__(self, db):
         self.connect(db)
 
@@ -24,6 +23,7 @@ class Server:
     def insert(self, coll, data):
         collection = self.collection(coll)
         collection.insert_one(data)
+        print(f'The following were inserted into {coll}: {data}')
 
     def updateOne(self, coll, filterProperty, filterValue, action, target, updateValue):
         collection = self.collection(coll)

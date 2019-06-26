@@ -1,28 +1,43 @@
-from mongoengine import *
 from model import *
 
-material = StandardsMaterial(
-    materialType = 'sheet metal',
-    materialName = 'carbon steel',
-    materialDensity = 4000
-)
+standardsSeed = Standards().Model 
 
-gauge1 = StandardsGauge(
-    gauge = '18 GA',
-    thickness = 0.048
-)
+print(standardsSeed)
 
-gauge2 = StandardsGauge(
-    gauge = '16 GA',
-    thickness = 0.06
-)
+standardsSeed['materialType'] = ['sheet metal', 'bar stock']
+standardsSeed['material'] = [{
+    'specMaterialType': 'sheet metal',
+    'materialName': 'carbon steel',
+    'materialDensity': 4000
+},{
+    'materialType': 'sheet metal',
+    'materialName': 'stainless steel',
+    'materialDensity': 3800
+}]
+standardsSeed['gauge'] = [{
+    'gaugeName': '18GA',
+    'gaugeThickness': 0.048
+},{
+    'gaugeName': '16GA',
+    'gaugeThickness': 0.06
+},{
+    'gaugeName': '12GA',
+    'gaugeThickness': 0.105
+}]
+standardsSeed['processCategory'] = [{
+    'processCategoryName': 'Press Brake'
+},{
+    'processCategoryName': 'Laser'
+}]
+standardsSeed['workCenter'] = [{
+    'workCenterID': 11015,
+    'workCenterName': 'Prima Laser',
+    'processCategory': 'Laser',
+    'hourlyRate': 40.54,
+    'hourlyOverhead': 134.14,
+    'estimatedTP': 1000,
+    'estimatedSetup': 0.083
+}]
 
-standards = Standards(
-    materialType = ['sheet metal', 'bar stock'],
-    material = [material],
-    gauge = [gauge1, gauge2]
-)
-
-standards.save()
-
-print('Database Contacted')
+print('\n\n\n')
+print(standardsSeed)
