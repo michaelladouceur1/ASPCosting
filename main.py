@@ -1,8 +1,12 @@
 from PyInquirer import prompt, Separator
-from style import style_1
+from sys import platform
 from os import system
 import time
+
+from utilities import zipToDict
+from style import style_1
 from server import Server
+
 
 spacing = '   '
 divider = '   ---------------'
@@ -10,8 +14,10 @@ divider = '   ---------------'
 # UTILITIES
 
 def clear():
-    system('cls')
-    system('clear')
+    if platform == 'win32':
+        system('cls')
+    else:
+        system('clear')
 
 def error_message(error):
     print(f'AN ERROR OCCURRED ACCESSING "{error}". RETURNING TO MAIN MENU')
@@ -34,6 +40,11 @@ routeElements = {
     'returnMainMenu': 'RETURN TO MAIN MENU',
     'addWorkCenter': 'ADD WORK CENTER',
     'addProcessCategory': 'ADD PROCESS CATEGORY',
+    'addMaterialStandards': 'ADD MATERIAL STANDARDS',
+    # LEVEL 4
+    'addMaterialType': 'ADD MATERIAL TYPE',
+    'addMaterial': 'ADD MATERIAL',
+    'addGauge': 'ADD GAUGE',
     # RETURN
     'returnToMainMenu': 'RETURN TO MAIN MENU'
 }
@@ -64,6 +75,10 @@ class View:
             routeElements['returnMainMenu']: main_menu,
             routeElements['addWorkCenter']: add_work_center,
             routeElements['addProcessCategory']: add_proccess_category,
+            routeElements['addMaterialStandards']: add_material_standards,
+            routeElements['addMaterialType']: add_material_type,
+            routeElements['addMaterial']: add_material,
+            routeElements['addGauge']: add_gauge,
             routeElements['returnToMainMenu']: main_menu
         }
         self.render()
@@ -145,7 +160,7 @@ class View:
         return answers['input']
 
 
-#### LEVEL 1 
+################################ LEVEL 1 ####################################
 def main_menu():
 
     v = View(title='ASP COSTING MODULE', version='routing', 
@@ -157,7 +172,7 @@ def main_menu():
                         routeElements['analytics'],
                         routeElements['maintenance']]}])
 
-#### LEVEL 2 
+################################ LEVEL 2 ####################################
 
 def new_costing():
 
@@ -204,10 +219,11 @@ def maintenance():
             items=[{'type': 'list', 'name': 'maintenance', 'message': '',
                     'elements': [
                         routeElements['addWorkCenter'], 
-                        routeElements['addProcessCategory'], 
+                        routeElements['addProcessCategory'],
+                        routeElements['addMaterialStandards'], 
                         routeElements['returnToMainMenu']]}])
 
-#### LEVEL 3 
+################################ LEVEL 3 ####################################
 
 def cost_part():
 
@@ -224,36 +240,101 @@ def cost_product_assembly():
 def cost_product_family():
     print(f'{spacing}PRODUCT FAMILY COST MENU')
 
+#### MAINTENANCE
+
 def add_work_center():
     processCategory = Server().find('standards')['processCategory'][0]
+    items = [{'type': 'input', 'name': 'workCenterID',
+            'elements': 'WORK CENTER ID NUMBER: '},
+            {'type': 'input', 'name': 'workCenterName',
+            'elements': 'WORK CENTER NAME: '},
+            {'type': 'list', 'name': 'processCategory', 'message': 'WORK CENTER PROCESS: ',
+            'elements': processCategory},
+            {'type': 'input', 'name': 'hourlyRate',
+            'elements': 'HOURLY RATE: '},
+            {'type': 'input', 'name': 'hourlyOverhead',
+            'elements': 'HOURLY OVERHEAD: '},
+            {'type': 'input', 'name': 'estimatedTP',
+            'elements': 'ESTIMATED THROUGH-PUT: '},
+            {'type': 'input', 'name': 'estimatedSetup',
+            'elements': 'ESTIMATED SETUP TIME: '}]
     v = View(title='ADD PROCESS MENU', version='input',
-        items=[{'type': 'input', 'name': 'workCenterID',
-                'elements': 'WORK CENTER ID NUMBER: '},
-                {'type': 'input', 'name': 'workCenterName',
-                'elements': 'WORK CENTER NAME: '},
-                {'type': 'list', 'name': 'processCategory', 'message': 'WORK CENTER PROCESS: ',
-                'elements': processCategory},
-                {'type': 'input', 'name': 'hourlyRate',
-                'elements': 'HOURLY RATE: '},
-                {'type': 'input', 'name': 'hourlyOverhead',
-                'elements': 'HOURLY OVERHEAD: '},
-                {'type': 'input', 'name': 'estimatedTP',
-                'elements': 'ESTIMATED THROUGH-PUT: '},
-                {'type': 'input', 'name': 'estimatedSetup',
-                'elements': 'ESTIMATED SETUP TIME: '}])
+        items=items)
 
-    print(v.answer)
+    data = zipToDict(items, v.answer)
+
+    Server().updateOne('standards', 'push', 'workCenter', data)
 
 def add_proccess_category():
-    elements = Server().find('standards')['processCategory'][0]
+    data = Server().find('standards')['processCategory'][0]
+    elements = []
+    for item in data:
+        elements.append(item['processCategoryName'])
+    items = [{'type': 'print', 'name': 'processes',
+            'elements': elements},
+            {'type': 'input', 'name': 'processCategoryName',
+            'elements': 'PROCESS NAME: '},
+            {'type': 'input', 'name': 'defaultRate',
+            'elements': 'DEFAULT RATE: '},
+            {'type': 'input', 'name': 'defaultOverhead',
+            'elements': 'DEFAULT OVERHEAD: '},
+            {'type': 'input', 'name': 'defaultTP',
+            'elements': 'DEFAULT THROUGH-PUT: '},
+            {'type': 'input', 'name': 'unitsTP',
+            'elements': 'THROUGH-PUT UNITS: '},
+            {'type': 'input', 'name': 'defaultSetup',
+            'elements': 'DEFAULT SETUP TIME (h): '}]
     v = View(title='ADD PROCESS CATEGORY', version='input',
-        items=[{'type': 'print', 'name': 'processes',
-                'elements': elements},
-                {'type': 'input', 'name': 'newProcess',
-                'elements': 'NEW PROCESS: '}])
+        items=items)
 
-    Server().updateOne('standards', 'push', 'processCategory', v.answer[0])
+    data = zipToDict(items, v.answer)
 
+    Server().updateOne('standards', 'push', 'processCategory', data)
+
+def add_material_standards():
+    v = View(title='MAINTENANCE MENU', version='routing', 
+            items=[{'type': 'list', 'name': 'addMaterialStandards', 'message': '',
+                    'elements': [
+                        routeElements['addMaterialType'], 
+                        routeElements['addMaterial'],
+                        routeElements['addGauge'], 
+                        routeElements['returnToMainMenu']]}])
+
+################################ LEVEL 4 ####################################
+
+def add_material_type():
+    elements = Server().find('standards')['materialType'][0]
+    items = [{'type': 'print', 'name': 'materialTypes',
+            'elements': elements},
+            {'type': 'input', 'name': 'materialType',
+            'elements': 'MATERIAL TYPE: '}]
+    v = View(title='ADD MATERIAL TYPE', version='input',
+        items=items)
+
+    Server().updateOne('standards', 'push', 'materialType', v.answer[0])
+
+def add_material():
+    data = Server().find('standards')['material'][0]
+    elements = []
+    for item in data:
+        elements.append(item['materialName'])
+    items = [{'type': 'print', 'name': 'processes',
+            'elements': elements},
+            {'type': 'input', 'name': 'materialType',
+            'elements': 'MATERIAL TYPE: '},
+            {'type': 'input', 'name': 'materialName',
+            'elements': 'MATERIAL NAME: '},
+            {'type': 'input', 'name': 'materialDensity',
+            'elements': 'MATERIAL DENSITY: '}]
+    v = View(title='ADD MATERIAL', version='input',
+        items=items)
+
+    data = zipToDict(items, v.answer)
+
+    Server().updateOne('standards', 'push', 'material', data)
+
+def add_gauge():
+    pass
 
 if __name__ == '__main__':
     main_menu()

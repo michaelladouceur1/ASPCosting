@@ -23,10 +23,14 @@ standardsSeed['gauge'] = [{
     'gaugeName': '12GA',
     'gaugeThickness': 0.105
 }]
-standardsSeed['processCategory'] = [
-    'Press Brake',
-    'Laser'
-]
+standardsSeed['processCategory'] = [{
+    'processCategoryName': 'Laser',
+    'defaultRate': 40,
+    'defaultOverhead': 120,
+    'defaultTP': 200,
+    'unitsTP': 'inches',
+    'defaultSetup': 0.5 
+}]
 standardsSeed['workCenter'] = [{
     'workCenterID': 11015,
     'workCenterName': 'Prima Laser',

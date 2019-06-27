@@ -17,11 +17,18 @@ class Standards(object):
 				'gaugeName': str,
 				'gaugeThickness': float
 			}],
-			'processCategory': [str],
+			'processCategory': [{
+				'processCategoryName': str,
+				'defaultRate': float,
+				'defaultOverhead': float,
+				'defaultTP': float,
+				'unitsTP': str,
+				'defaultSetup': float
 				# 'averageRate': float,
 				# 'averageOverhead': float,
 				# 'averageTP': float,
 				# 'averageSetup': float
+				}],
 			'workCenter': [{
 				'workCenterID': int,
 				'workCenterName': str,

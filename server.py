@@ -1,6 +1,6 @@
 import pymongo
 from pymongo import MongoClient
-from type_check import CheckType as ct
+from utilities import CheckType as ct
 import json
 from pandas import DataFrame
 
