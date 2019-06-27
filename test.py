@@ -1,20 +1,10 @@
-# from server import Server
-# from model import Model
-import pymongo
-from pymongo import MongoClient
+from server import Server
+import pprint
 
-client = MongoClient()
-db = client['asp-costing']
-collection = db['standards']
+server = Server()
 
-# db = Server('asp-costing')
+data = {}
 
-post = {"author": "Michael",
-		"text": "My first blog post!",
-		"tags": ["mongodb", "python", "pymongo"]}
+# response = server.find('standards', data)
 
-
-# post_id = collection.insert_one(post).inserted_id
-# print(post_id)
-
-collection.update_many({'author': 'Michael'}, {'$set': {'author': 'Cameron'}})
+server.updateOne('standards', 'push', 'materialType', 'plastic')

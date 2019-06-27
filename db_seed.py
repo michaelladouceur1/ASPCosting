@@ -1,12 +1,11 @@
 from model import *
+from server import Server
 
 standardsSeed = Standards().Model 
 
-print(standardsSeed)
-
 standardsSeed['materialType'] = ['sheet metal', 'bar stock']
 standardsSeed['material'] = [{
-    'specMaterialType': 'sheet metal',
+    'materialType': 'sheet metal',
     'materialName': 'carbon steel',
     'materialDensity': 4000
 },{
@@ -24,11 +23,10 @@ standardsSeed['gauge'] = [{
     'gaugeName': '12GA',
     'gaugeThickness': 0.105
 }]
-standardsSeed['processCategory'] = [{
-    'processCategoryName': 'Press Brake'
-},{
-    'processCategoryName': 'Laser'
-}]
+standardsSeed['processCategory'] = [
+    'Press Brake',
+    'Laser'
+]
 standardsSeed['workCenter'] = [{
     'workCenterID': 11015,
     'workCenterName': 'Prima Laser',
@@ -39,5 +37,4 @@ standardsSeed['workCenter'] = [{
     'estimatedSetup': 0.083
 }]
 
-print('\n\n\n')
-print(standardsSeed)
+Server('asp-costing').insert('standards', standardsSeed)

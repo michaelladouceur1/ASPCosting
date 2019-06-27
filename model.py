@@ -17,13 +17,11 @@ class Standards(object):
 				'gaugeName': str,
 				'gaugeThickness': float
 			}],
-			'processCategory': [{
-				'processCategoryName': str
+			'processCategory': [str],
 				# 'averageRate': float,
 				# 'averageOverhead': float,
 				# 'averageTP': float,
 				# 'averageSetup': float
-			}],
 			'workCenter': [{
 				'workCenterID': int,
 				'workCenterName': str,
@@ -37,7 +35,7 @@ class Standards(object):
 
 class Part(object):
 	def __init__(self):
-		self.Model: Dict = {
+		self.Model = {
 			'partNumber': str,
 			'materialType': str,
 			'material': str,

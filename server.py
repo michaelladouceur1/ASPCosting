@@ -1,18 +1,17 @@
 import pymongo
 from pymongo import MongoClient
 from type_check import CheckType as ct
+import json
+from pandas import DataFrame
 
 class Server:
-    def __init__(self, db):
-        self.connect(db)
+    def __init__(self):
+        self.connect('asp-costing')
 
     def connect(self, db):
         try:
             connection = MongoClient()
-            print(f'Connected to MongoDB: {connection}')
             self.db = connection[db]
-            print(f'Connected to Database: {self.db}')
-            # return db
         except:
             print(f'There was an issue connecting to the Database')
 
@@ -20,13 +19,30 @@ class Server:
         collection = self.db[coll]
         return collection
 
+    def cursorToDF(self, cursor):
+        df = DataFrame(list(cursor))
+        return df
+
     def insert(self, coll, data):
         collection = self.collection(coll)
         collection.insert_one(data)
         print(f'The following were inserted into {coll}: {data}')
 
-    def updateOne(self, coll, filterProperty, filterValue, action, target, updateValue):
+    def updateOne(self, coll, action, target, updateValue, filterProperty=None, filterValue=None):
         collection = self.collection(coll)
-        collection.update_one(
+        if coll.lower() == 'standards':
+            cursor = self.find('standards')
+            id = cursor['_id'][0]
+            collection.update_one(
+                            {'_id': id}, 
+                            {f'${action}': {f'{target}':f'{updateValue}'}})
+        else:
+            collection.update_one(
                             {f'{filterProperty}':f'{filterValue}'}, 
                             {f'${action}': {f'{target}':f'{updateValue}'}})
+
+    def find(self, coll, filter={}):
+        collection = self.collection(coll)
+        response = collection.find(filter)
+        data = self.cursorToDF(response)
+        return data

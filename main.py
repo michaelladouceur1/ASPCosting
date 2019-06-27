@@ -2,6 +2,7 @@ from PyInquirer import prompt, Separator
 from style import style_1
 from os import system
 import time
+from server import Server
 
 spacing = '   '
 divider = '   ---------------'
@@ -25,13 +26,16 @@ routeElements = {
     'viewCosting': 'VIEW COSTING',
     'editCosting': 'EDIT COSTING',
     'analytics': 'ANALYTICS',
+    'maintenance': 'MAINTENANCE',
     # LEVEL 3
     'costPart': 'COST PART',
     'costProductAssembly': 'COST PRODUCT ASSEMBLY',
     'costProductFamily': 'COST PRODUCT FAMILY',
     'returnMainMenu': 'RETURN TO MAIN MENU',
     'addWorkCenter': 'ADD WORK CENTER',
-    'addProcessCategory': 'ADD PROCESS CATEGORY'
+    'addProcessCategory': 'ADD PROCESS CATEGORY',
+    # RETURN
+    'returnToMainMenu': 'RETURN TO MAIN MENU'
 }
 
 inputElements = {
@@ -53,12 +57,14 @@ class View:
             routeElements['newCosting']: new_costing,
             routeElements['viewCosting']: view_costing,
             routeElements['analytics']: analytics,
+            routeElements['maintenance']: maintenance,
             routeElements['costPart']: cost_part,
             routeElements['costProductAssembly']: cost_product_assembly,
             routeElements['costProductFamily']: cost_product_family,
             routeElements['returnMainMenu']: main_menu,
             routeElements['addWorkCenter']: add_work_center,
-            routeElements['addProcessCategory']: add_proccess_category
+            routeElements['addProcessCategory']: add_proccess_category,
+            routeElements['returnToMainMenu']: main_menu
         }
         self.render()
 
@@ -97,15 +103,16 @@ class View:
 
     def printData(self, index):
         for data in self.items[index]['elements']:
-            print(f'{spacing}{data}')
+            print(f'  {data}')
 
     # TEMPLATE MENU ITEMS
 
     def list(self, index):
+        message = self.items[index]['message']
         params = {
             'type': 'list',
             'name': 'list',
-            'message': '',
+            'message': message,
             'choices': self.items[index]['elements']
         }
         answers = prompt(params, style=style_1)
@@ -138,47 +145,76 @@ class View:
         return answers['input']
 
 
-#### LEVEL 1 ####
+#### LEVEL 1 
 def main_menu():
 
     v = View(title='ASP COSTING MODULE', version='routing', 
-            items=[{'type': 'list',
-                    'elements': [routeElements['newCosting'], routeElements['viewCosting'], routeElements['editCosting'], routeElements['analytics']]}])
+            items=[{'type': 'list', 'name': 'mainMenu', 'message': '',
+                    'elements': [
+                        routeElements['newCosting'], 
+                        routeElements['viewCosting'], 
+                        routeElements['editCosting'], 
+                        routeElements['analytics'],
+                        routeElements['maintenance']]}])
 
-#### LEVEL 2 ####
+#### LEVEL 2 
 
 def new_costing():
 
     v = View(title='NEW COSTING MENU', version='routing', 
-            items=[{'type': 'list',
-                    'elements': [routeElements['costPart'], routeElements['costProductAssembly'], routeElements['costProductAssembly'], routeElements['analytics']]}])
+            items=[{'type': 'list', 'name': 'newCosting', 'message': '',
+                    'elements': [
+                        routeElements['costPart'], 
+                        routeElements['costProductAssembly'], 
+                        routeElements['costProductAssembly'], 
+                        routeElements['analytics']]}])
 
 def view_costing():
 
     v = View(title='VIEW COSTING MENU', version='routing', 
-            items=[{'type': 'list',
-                    'elements': ['COST PART', 'COST PRODUCT ASSEMBLY', 'COST PRODUCT FAMILY', 'RETURN TO MAIN MENU']}])
+            items=[{'type': 'list', 'name': 'viewCosting', 'message': '',
+                    'elements': [
+                        'COST PART', 
+                        'COST PRODUCT ASSEMBLY', 
+                        'COST PRODUCT FAMILY', 
+                        routeElements['returnToMainMenu']]}])
 
 def edit_costing():
 
     v = View(title='EDIT COSTING MENU', version='routing', 
-            items=[{'type': 'list',
-                    'elements': ['COST PART', 'COST PRODUCT ASSEMBLY', 'COST PRODUCT FAMILY', 'RETURN TO MAIN MENU']}])
+            items=[{'type': 'list', 'name': 'editCosting', 'message': '',
+                    'elements': [
+                        'COST PART', 
+                        'COST PRODUCT ASSEMBLY', 
+                        'COST PRODUCT FAMILY', 
+                        routeElements['returnToMainMenu']]}])
 
 def analytics():
 
     v = View(title='ANALYTICS MENU', version='routing', 
-            items=[{'type': 'list',
-                    'elements': [routeElements['addWorkCenter'], routeElements['addProcessCategory'], 'RETURN TO MAIN MENU']}])
+            items=[{'type': 'list', 'name': 'analytics', 'message': '',
+                    'elements': [
+                        routeElements['addWorkCenter'], 
+                        routeElements['addProcessCategory'], 
+                        routeElements['returnToMainMenu']]}])
 
-#### LEVEL 3 ####
+def maintenance():
+
+    v = View(title='MAINTENANCE MENU', version='routing', 
+            items=[{'type': 'list', 'name': 'maintenance', 'message': '',
+                    'elements': [
+                        routeElements['addWorkCenter'], 
+                        routeElements['addProcessCategory'], 
+                        routeElements['returnToMainMenu']]}])
+
+#### LEVEL 3 
 
 def cost_part():
 
     v = View(title='PART COST MENU', version='input', 
-        items=[{'type': 'list', 'name': 'materialType',
+        items=[{'type': 'list', 'name': 'materialType', 'message': '',
                 'elements': inputElements['materialType']},
-                {'type': 'list', 'name': 'material',
+                {'type': 'list', 'name': 'material', 'message': '',
                 'elements': inputElements['material']}])
     print(v.answer)
 
@@ -189,21 +225,34 @@ def cost_product_family():
     print(f'{spacing}PRODUCT FAMILY COST MENU')
 
 def add_work_center():
+    processCategory = Server().find('standards')['processCategory'][0]
     v = View(title='ADD PROCESS MENU', version='input',
         items=[{'type': 'input', 'name': 'workCenterID',
                 'elements': 'WORK CENTER ID NUMBER: '},
-                {'type': 'list', 'name': 'workCenterCategory',
-                'elements': 'WORK CENTER ID NUMBER: '}])
+                {'type': 'input', 'name': 'workCenterName',
+                'elements': 'WORK CENTER NAME: '},
+                {'type': 'list', 'name': 'processCategory', 'message': 'WORK CENTER PROCESS: ',
+                'elements': processCategory},
+                {'type': 'input', 'name': 'hourlyRate',
+                'elements': 'HOURLY RATE: '},
+                {'type': 'input', 'name': 'hourlyOverhead',
+                'elements': 'HOURLY OVERHEAD: '},
+                {'type': 'input', 'name': 'estimatedTP',
+                'elements': 'ESTIMATED THROUGH-PUT: '},
+                {'type': 'input', 'name': 'estimatedSetup',
+                'elements': 'ESTIMATED SETUP TIME: '}])
+
     print(v.answer)
 
 def add_proccess_category():
+    elements = Server().find('standards')['processCategory'][0]
     v = View(title='ADD PROCESS CATEGORY', version='input',
         items=[{'type': 'print', 'name': 'processes',
-                'elements': ['Press Brake', 'Laser', 'Stamping']},
+                'elements': elements},
                 {'type': 'input', 'name': 'newProcess',
                 'elements': 'NEW PROCESS: '}])
 
-    print(type(v.answer[0]))
+    Server().updateOne('standards', 'push', 'processCategory', v.answer[0])
 
 
 if __name__ == '__main__':
