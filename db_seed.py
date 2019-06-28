@@ -41,4 +41,4 @@ standardsSeed['workCenter'] = [{
     'estimatedSetup': 0.083
 }]
 
-Server('asp-costing').insert('standards', standardsSeed)
+Server().insert('standards', standardsSeed)

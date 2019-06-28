@@ -267,6 +267,7 @@ def add_work_center():
 
 def add_proccess_category():
     data = Server().find('standards')['processCategory'][0]
+    print(data)
     elements = []
     for item in data:
         elements.append(item['processCategoryName'])
@@ -288,6 +289,7 @@ def add_proccess_category():
         items=items)
 
     data = zipToDict(items, v.answer)
+    print(type(data))
 
     Server().updateOne('standards', 'push', 'processCategory', data)
 
@@ -313,15 +315,18 @@ def add_material_type():
 
     Server().updateOne('standards', 'push', 'materialType', v.answer[0])
 
+    add_material_standards()
+
 def add_material():
     data = Server().find('standards')['material'][0]
-    elements = []
+    materialType = Server().find('standards')['materialType'][0]
+    material = []
     for item in data:
-        elements.append(item['materialName'])
-    items = [{'type': 'print', 'name': 'processes',
-            'elements': elements},
-            {'type': 'input', 'name': 'materialType',
-            'elements': 'MATERIAL TYPE: '},
+        material.append(item['materialName'])
+    items = [{'type': 'print', 'name': 'material',
+            'elements': material},
+            {'type': 'list', 'name': 'materialType', 'message': 'MATERIAL TYPE: ',
+            'elements': materialType},
             {'type': 'input', 'name': 'materialName',
             'elements': 'MATERIAL NAME: '},
             {'type': 'input', 'name': 'materialDensity',
@@ -333,8 +338,27 @@ def add_material():
 
     Server().updateOne('standards', 'push', 'material', data)
 
+    add_material_standards()
+
 def add_gauge():
-    pass
+    data = Server().find('standards')['gauge'][0]
+    gauge = []
+    for item in data:
+        gauge.append(f'{item["gaugeName"]} : {item["gaugeThickness"]}')
+    items = [{'type': 'print', 'name': 'material',
+            'elements': gauge},
+            {'type': 'input', 'name': 'gaugeName',
+            'elements': 'ADD GAUGE NAME: '},
+            {'type': 'input', 'name': 'gaugeThickness',
+            'elements': 'ADD GAUGE THICKNESS: '}]
+    v = View(title='ADD MATERIAL', version='input',
+        items=items)
+
+    data = zipToDict(items, v.answer)
+
+    Server().updateOne('standards', 'push', 'gauge', data)
+
+    add_material_standards()
 
 if __name__ == '__main__':
     main_menu()

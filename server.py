@@ -35,7 +35,7 @@ class Server:
             id = cursor['_id'][0]
             collection.update_one(
                             {'_id': id}, 
-                            {f'${action}': {f'{target}':f'{updateValue}'}})
+                            {f'${action}': {f'{target}': updateValue}})
         else:
             collection.update_one(
                             {f'{filterProperty}':f'{filterValue}'}, 
