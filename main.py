@@ -261,7 +261,7 @@ def add_work_center():
     v = View(title='ADD PROCESS MENU', version='input',
         items=items)
 
-    data = zipToDict(items, v.answer)
+    data = zipDictAndListToDict(items, v.answer)
 
     Server().updateOne('standards', 'push', 'workCenter', data)
 
@@ -288,7 +288,7 @@ def add_proccess_category():
     v = View(title='ADD PROCESS CATEGORY', version='input',
         items=items)
 
-    data = zipToDict(items, v.answer)
+    data = zipDictAndListToDict(items, v.answer)
     print(type(data))
 
     Server().updateOne('standards', 'push', 'processCategory', data)
@@ -334,7 +334,7 @@ def add_material():
     v = View(title='ADD MATERIAL', version='input',
         items=items)
 
-    data = zipToDict(items, v.answer)
+    data = zipDictAndListToDict(items, v.answer)
 
     Server().updateOne('standards', 'push', 'material', data)
 
@@ -354,7 +354,7 @@ def add_gauge():
     v = View(title='ADD MATERIAL', version='input',
         items=items)
 
-    data = zipToDict(items, v.answer)
+    data = zipDictAndListToDict(items, v.answer)
 
     Server().updateOne('standards', 'push', 'gauge', data)
 

@@ -45,16 +45,30 @@ class Part(object):
 		self.Model = {
 			'partNumber': str,
 			'materialType': str,
-			'material': str,
-			'gauge': str,
-			'blankHeight': float,
-			'blankWidth': float,
+			'material': {
+				'materialType': Model().material['materialType'],
+				'materialName': Model().material['materialName'],
+				'materialDensity': Model().material['materialDensity']
+			},
+			'gauge': {
+				'gaugeName': Model().gauge['gaugeName'],
+				'gaugeThickness': Model().gauge['gaugeThickness']
+			},
+			'blank': {
+				'width': float,
+				'height': float,
+				'laserPath': float,
+				'weight': float
+			},
 			'partProcesses': [{
 				'processCategory': str,
-				'setupTime': float,
 				'operationNumber': int,
-				'timePerOperation': float,
+				'operationName': str,
 				'workCenterID': int
+				'setup': float,
+				'operationTime': float,
+				'operationQuantity': int
+				
 			}]
 		}
 

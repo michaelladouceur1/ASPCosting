@@ -26,7 +26,7 @@ class CheckType:
 		else:
 			self.verify(self.input)
 
-def zipToDict(keys, values):
+def zipDictAndListToDict(keys, values):
 	newKeys = []
 	for key in keys:
 		if key['type'] == 'print':
