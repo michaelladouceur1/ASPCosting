@@ -35,3 +35,9 @@ def zipDictAndListToDict(keys, values):
 			newKeys.append(key['name'])
 	data = dict(zip(newKeys, values))
 	return data
+
+def dfToList(df, category):
+	arr = []
+	for item in df:
+		arr.append(item[category])
+	return arr

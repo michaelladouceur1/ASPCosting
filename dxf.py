@@ -91,14 +91,14 @@ class DXF:
 		return blankx, blanky
 
 
-dxf = DXF('test3')
+# dxf = DXF('test2')
 
 
 
-sum = dxf.length()
+# sum = dxf.length()
 
-blankx,blanky = dxf.blank()
+# blankx,blanky = dxf.blank()
 
-print(f'TOTAL LENGTH: {sum}')
-print(f'BLANK WIDTH: {blankx}')
-print(f'BLANK HEIGHT: {blanky}')
+# print(f'TOTAL LENGTH: {sum}')
+# print(f'BLANK WIDTH: {blankx}')
+# print(f'BLANK HEIGHT: {blanky}')

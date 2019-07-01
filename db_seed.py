@@ -2,6 +2,9 @@ from model import *
 from server import Server
 
 standardsSeed = Standards().Model 
+partSeed = Part().Model
+
+# STANDARDS
 
 standardsSeed['materialType'] = ['sheet metal', 'bar stock']
 standardsSeed['material'] = [{
@@ -42,3 +45,8 @@ standardsSeed['workCenter'] = [{
 }]
 
 Server().insert('standards', standardsSeed)
+
+# PART
+
+partSeed['partNumber'] = 'WAR36HRTB.40'
+partSeed['material'] = 

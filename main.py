@@ -3,9 +3,11 @@ from sys import platform
 from os import system
 import time
 
-from utilities import zipToDict
+from utilities import zipDictAndListToDict, dfToList
 from style import style_1
 from server import Server
+# from test import HotKeys
+from dxf import DXF
 
 
 spacing = '   '
@@ -171,6 +173,8 @@ def main_menu():
                         routeElements['editCosting'], 
                         routeElements['analytics'],
                         routeElements['maintenance']]}])
+    
+    print(v)
 
 ################################ LEVEL 2 ####################################
 
@@ -226,13 +230,56 @@ def maintenance():
 ################################ LEVEL 3 ####################################
 
 def cost_part():
+    materialDF = Server().find('standards')['material'][0]
+    gaugeDF = Server().find('standards')['gauge'][0]
+    processCategoryDF = Server().find('standards')['processCategory'][0]
+    material = dfToList(materialDF, 'materialName')
+    gauge = dfToList(gaugeDF, 'gaugeName')
+    processCategory = dfToList(processCategoryDF, 'processCategoryName')
+    partNoItems = [{'type': 'input', 'name': 'partNumber',
+            'elements': 'PART NUMBER: '}]
+    partNo = View(title='PART COST MENU', version='input', 
+        items=partNoItems)
 
-    v = View(title='PART COST MENU', version='input', 
-        items=[{'type': 'list', 'name': 'materialType', 'message': '',
-                'elements': inputElements['materialType']},
-                {'type': 'list', 'name': 'material', 'message': '',
-                'elements': inputElements['material']}])
-    print(v.answer)
+    matItems = [{'type': 'list', 'name': 'material', 'message': '',
+            'elements': material}]
+
+    mat = View(title='PART COST MENU', version='input', 
+        items=matItems)
+
+    gaugeItems = [{'type': 'list', 'name': 'gauge', 'message': '',
+            'elements': gauge}]
+
+    ga = View(title='PART COST MENU', version='input', 
+        items=gaugeItems)
+
+    dxf = DXF(partNo.answer[0])
+    blankx, blanky = dxf.blank()
+    length = dxf.length() 
+    blankInfo = [f'BLANK WIDTH: {blankx}', f'BLANK HEIGHT: {blanky}',f'BLANK LASER PATH: {length}']
+
+    processItems = [{'type': 'print', 'name': 'blank',
+            'elements': blankInfo},
+            {'type': 'list', 'name': 'processCategoryName', 'message': 'PROCESS CATEGORY: ',
+            'elements': processCategory},
+            {'type': 'input', 'name': 'operationNumber',
+            'elements': 'OPERATION NUMBER: '},
+            {'type': 'input', 'name': 'operationName',
+            'elements': 'OPERATION NAME: '},
+            {'type': 'input', 'name': 'workCenterID',
+            'elements': 'WORK CENTER ID: '},
+            {'type': 'input', 'name': 'setup',
+            'elements': 'SETUP TIME: '},
+            {'type': 'input', 'name': 'operationTime',
+            'elements': 'TIME PER OPERATION: '},
+            {'type': 'input', 'name': 'operationQuantity',
+            'elements': 'OPERATION QUANTITY: '},]
+    process = View(title='PART COST MENU', version='input', 
+        items=processItems)
+    print(partNo.answer)
+    print(mat.answer)
+    print(ga.answer)
+    print(process.answer)
 
 def cost_product_assembly():
     print(f'{spacing}PRODUCT ASSEMBLY COST MENU')
@@ -244,12 +291,15 @@ def cost_product_family():
 
 def add_work_center():
     processCategory = Server().find('standards')['processCategory'][0]
+    elements = []
+    for item in processCategory:
+        elements.append(item['processCategoryName'])
     items = [{'type': 'input', 'name': 'workCenterID',
             'elements': 'WORK CENTER ID NUMBER: '},
             {'type': 'input', 'name': 'workCenterName',
             'elements': 'WORK CENTER NAME: '},
             {'type': 'list', 'name': 'processCategory', 'message': 'WORK CENTER PROCESS: ',
-            'elements': processCategory},
+            'elements': elements},
             {'type': 'input', 'name': 'hourlyRate',
             'elements': 'HOURLY RATE: '},
             {'type': 'input', 'name': 'hourlyOverhead',
@@ -264,6 +314,8 @@ def add_work_center():
     data = zipDictAndListToDict(items, v.answer)
 
     Server().updateOne('standards', 'push', 'workCenter', data)
+
+    maintenance()
 
 def add_proccess_category():
     data = Server().find('standards')['processCategory'][0]
@@ -292,6 +344,8 @@ def add_proccess_category():
     print(type(data))
 
     Server().updateOne('standards', 'push', 'processCategory', data)
+
+    maintenance()
 
 def add_material_standards():
     v = View(title='MAINTENANCE MENU', version='routing', 
@@ -361,4 +415,5 @@ def add_gauge():
     add_material_standards()
 
 if __name__ == '__main__':
+    # HotKeys(main_menu)
     main_menu()

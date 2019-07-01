@@ -44,15 +44,14 @@ class Part(object):
 	def __init__(self):
 		self.Model = {
 			'partNumber': str,
-			'materialType': str,
 			'material': {
-				'materialType': Model().material['materialType'],
-				'materialName': Model().material['materialName'],
-				'materialDensity': Model().material['materialDensity']
+				'materialType': str,
+				'materialName': str,
+				'materialDensity': float
 			},
 			'gauge': {
-				'gaugeName': Model().gauge['gaugeName'],
-				'gaugeThickness': Model().gauge['gaugeThickness']
+				'gaugeName': str,
+				'gaugeThickness': float
 			},
 			'blank': {
 				'width': float,
@@ -64,11 +63,10 @@ class Part(object):
 				'processCategory': str,
 				'operationNumber': int,
 				'operationName': str,
-				'workCenterID': int
+				'workCenterID': int,
 				'setup': float,
 				'operationTime': float,
 				'operationQuantity': int
-				
 			}]
 		}
 
