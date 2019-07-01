@@ -1,13 +1,19 @@
-from model import *
-from server import Server
-from bson import DBRef
+from utilities import zipDictAndListToDict
 
-standards = Server().find('standards')
-id = standards._id[0]
+values = ['hello', 'stuff', 'no']
+keys = [{'type': 'input', 'name': 'processCategoryName',
+            'elements': 'PROCESS NAME: '},
+            {'type': 'input', 'name': 'defaultRate',
+            'elements': 'DEFAULT RATE: '},
+            {'type': 'input', 'name': 'defaultOverhead',
+            'elements': 'DEFAULT OVERHEAD: '},
+            {'type': 'input', 'name': 'defaultTP',
+            'elements': 'DEFAULT THROUGH-PUT: '},
+            {'type': 'input', 'name': 'unitsTP',
+            'elements': 'THROUGH-PUT UNITS: '},
+            {'type': 'input', 'name': 'defaultSetup',
+            'elements': 'DEFAULT SETUP TIME (h): '}]
 
-partSeed = Part().Model
+data = zipDictAndListToDict(keys, values)
 
-partSeed['partNumber'] = 'WAR36HRTB.40'
-# partSeed['material'] = 
-
-print(partSeed)
+print(data)

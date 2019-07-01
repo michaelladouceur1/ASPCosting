@@ -230,56 +230,109 @@ def maintenance():
 ################################ LEVEL 3 ####################################
 
 def cost_part():
-    materialDF = Server().find('standards')['material'][0]
-    gaugeDF = Server().find('standards')['gauge'][0]
-    processCategoryDF = Server().find('standards')['processCategory'][0]
-    material = dfToList(materialDF, 'materialName')
-    gauge = dfToList(gaugeDF, 'gaugeName')
-    processCategory = dfToList(processCategoryDF, 'processCategoryName')
+
+    # PART NUMBER
+
     partNoItems = [{'type': 'input', 'name': 'partNumber',
             'elements': 'PART NUMBER: '}]
     partNo = View(title='PART COST MENU', version='input', 
         items=partNoItems)
 
+    # MATERIAL
+
+    # materialDF = Server().find('standards')['material'][0]
+    # material = dfToList(materialDF, 'materialName')
+
     matItems = [{'type': 'list', 'name': 'material', 'message': '',
-            'elements': material}]
+            'elements': ['carbon steel', 'stainless']}]
 
     mat = View(title='PART COST MENU', version='input', 
         items=matItems)
 
+    # GAUGE
+
+    # gaugeDF = Server().find('standards')['gauge'][0]
+    # gauge = dfToList(gaugeDF, 'gaugeName')
+
     gaugeItems = [{'type': 'list', 'name': 'gauge', 'message': '',
-            'elements': gauge}]
+            'elements': ['18GA', '16GA']}]
 
     ga = View(title='PART COST MENU', version='input', 
         items=gaugeItems)
 
+    # BLANK 
+
     dxf = DXF(partNo.answer[0])
     blankx, blanky = dxf.blank()
-    length = dxf.length() 
+    length = dxf.laserPath() 
     blankInfo = [f'BLANK WIDTH: {blankx}', f'BLANK HEIGHT: {blanky}',f'BLANK LASER PATH: {length}']
 
-    processItems = [{'type': 'print', 'name': 'blank',
+    blankItems = [{'type': 'print', 'name': 'blankInfo',
             'elements': blankInfo},
-            {'type': 'list', 'name': 'processCategoryName', 'message': 'PROCESS CATEGORY: ',
-            'elements': processCategory},
-            {'type': 'input', 'name': 'operationNumber',
-            'elements': 'OPERATION NUMBER: '},
-            {'type': 'input', 'name': 'operationName',
-            'elements': 'OPERATION NAME: '},
-            {'type': 'input', 'name': 'workCenterID',
-            'elements': 'WORK CENTER ID: '},
-            {'type': 'input', 'name': 'setup',
-            'elements': 'SETUP TIME: '},
-            {'type': 'input', 'name': 'operationTime',
-            'elements': 'TIME PER OPERATION: '},
-            {'type': 'input', 'name': 'operationQuantity',
-            'elements': 'OPERATION QUANTITY: '},]
-    process = View(title='PART COST MENU', version='input', 
-        items=processItems)
+            {'type': 'list', 'name': 'blank', 'message': 'BLANK INFO CORRECT: ',
+            'elements': ['YES', 'NO']}]
+
+    blank = View(title='PART COST MENU', version='input', 
+        items=blankItems)
+
+    if blank.answer[0] == 'YES':
+        blank = [blankx, blanky, length]
+    else:
+        blankItems = [{'type': 'input', 'name': 'width',
+            'elements': 'BLANK WIDTH: '},
+            {'type': 'input', 'name': 'height',
+            'elements': 'BLANK HEIGHT: '},
+            {'type': 'input', 'name': 'laserPath',
+            'elements': 'LASER PATH LENGTH: '},
+            {'type': 'input', 'name': 'weight',
+            'elements': 'BLANK WEIGHT: '},]
+
+        blank = View(title='PART COST MENU', version='input', 
+            items=blankItems)
+
+    # PROCESS CATEGORY
+
+    # processCategoryDF = Server().find('standards')['processCategory'][0]
+    # processCategory = dfToList(processCategoryDF, 'processCategoryName')
+    # workCenterIDDF = Server().find('standards')['workCenter'][0]
+    # workCenterID = dfToList(workCenterIDDF, 'workCenterID')
+
+    addProcess = True
+    processCount = 0
+    processes = []
+
+    while addProcess:
+        processItems = [
+                {'type': 'input', 'name': 'operationNumber',
+                'elements': 'OPERATION NUMBER: '},
+                {'type': 'input', 'name': 'operationName',
+                'elements': 'OPERATION NAME: '},
+                {'type': 'list', 'name': 'processCategoryName', 'message': 'PROCESS CATEGORY: ',
+                'elements': ['PRESS BRAKE', 'LASER']},
+                {'type': 'list', 'name': 'workCenterID', 'message': 'WORK CENTER ID: ',
+                'elements': ['1002', '25309']},
+                {'type': 'input', 'name': 'setup',
+                'elements': 'SETUP TIME: '},
+                {'type': 'input', 'name': 'operationTime',
+                'elements': 'TIME PER OPERATION: '},
+                {'type': 'input', 'name': 'operationQuantity',
+                'elements': 'OPERATION QUANTITY: '},
+                {'type': 'list', 'name': 'addProcess', 'message': 'ADD ANOTHER PROCESS: ',
+                'elements': ['YES', 'NO']}]
+        process = View(title='PART COST MENU', version='input', 
+            items=processItems)
+        processes.append(process.answer)
+        if process.answer[7] == 'YES':
+            addProcess = True
+            processCount += 1
+        else:
+            addProcess = False
+
     print(partNo.answer)
     print(mat.answer)
     print(ga.answer)
-    print(process.answer)
+    print(blank)
+    print(processes)
 
 def cost_product_assembly():
     print(f'{spacing}PRODUCT ASSEMBLY COST MENU')
@@ -367,7 +420,7 @@ def add_material_type():
     v = View(title='ADD MATERIAL TYPE', version='input',
         items=items)
 
-    Server().updateOne('standards', 'push', 'materialType', v.answer[0])
+    Server().updateOne('standards', 'push', 'materialType', v.answer[0].upper())
 
     add_material_standards()
 

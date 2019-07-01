@@ -43,6 +43,9 @@ class Server:
 
     def find(self, coll, filter={}):
         collection = self.collection(coll)
-        response = collection.find(filter)
-        data = self.cursorToDF(response)
+        try:
+            response = collection.find(filter)
+            data = self.cursorToDF(response)
+        except FileNotFoundError:
+            data = 'PLACE HOLDER'
         return data

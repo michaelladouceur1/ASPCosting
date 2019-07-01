@@ -26,8 +26,13 @@ class CheckType:
 		else:
 			self.verify(self.input)
 
+def listToUpper(values):
+	values = map(lambda x:x.upper(), values)
+	return values
+
 def zipDictAndListToDict(keys, values):
 	newKeys = []
+	values = listToUpper(values)
 	for key in keys:
 		if key['type'] == 'print':
 			continue

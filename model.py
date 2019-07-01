@@ -60,9 +60,9 @@ class Part(object):
 				'weight': float
 			},
 			'partProcesses': [{
-				'processCategory': str,
 				'operationNumber': int,
 				'operationName': str,
+				'processCategory': str,
 				'workCenterID': int,
 				'setup': float,
 				'operationTime': float,

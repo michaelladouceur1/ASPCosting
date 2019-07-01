@@ -9,14 +9,16 @@ class DXF:
 			raise FileNotFoundError(f'{dwg} CANNOT BE FOUND') from None
 		self.msp = drawing.modelspace()
 
-	def length(self):
+	def laserPath(self):
 		def line(e):
 			start = [e.dxf.start[0], e.dxf.start[1]]
 			end = [e.dxf.end[0], e.dxf.end[1]]
-			return math.sqrt((end[0]-start[0])**2 + (end[1]-start[1])**2)
+			length = math.sqrt((end[0]-start[0])**2 + (end[1]-start[1])**2)
+			return length
 
 		def circle(e):
-			return 2*math.pi*e.dxf.radius
+			length = 2*math.pi*e.dxf.radius
+			return length
 
 		def arc(e):
 			radius = e.dxf.radius
@@ -40,10 +42,10 @@ class DXF:
 				length += inf
 			return length
 
-		sum = 0
+		total = 0.0
 		for e in self.msp:
 			if e.dxf.layer != 'OBJ':
-				return 0
+				pass
 			else:
 				if e.dxftype() == 'LINE':
 					length = line(e)
@@ -56,8 +58,8 @@ class DXF:
 				else:
 					print('SOMETHING I DONT KNOW')
 					length = 0
-			sum += length
-		return sum
+				total += length
+		return total
 
 	def blank(self):
 		index = 0
@@ -91,14 +93,12 @@ class DXF:
 		return blankx, blanky
 
 
-# dxf = DXF('test2')
+# dxf = DXF('WAR72SRS.40')
 
-
-
-# sum = dxf.length()
+# total = dxf.laserPath()
 
 # blankx,blanky = dxf.blank()
 
-# print(f'TOTAL LENGTH: {sum}')
+# print(f'BLANK LASER PATH: {total}')
 # print(f'BLANK WIDTH: {blankx}')
 # print(f'BLANK HEIGHT: {blanky}')
