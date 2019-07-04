@@ -1,74 +1,83 @@
-import pymongo
-from pymongo import MongoClient
-from typing import *
-from server import Server 
-from type_check import CheckType
+import sqlalchemy
+from sqlalchemy import create_engine, Column, String, Integer, Float, ForeignKey
+from sqlalchemy.orm import relationship, backref
+from sqlalchemy.ext.declarative import declarative_base
 
-class Standards(object):
-	def __init__(self):
-		self.Model = {
-			'materialType': [str],
-			'material': [{
-				'materialType': str,
-				'materialName': str,
-				'materialDensity': float
-			}],
-			'gauge': [{
-				'gaugeName': str,
-				'gaugeThickness': float
-			}],
-			'processCategory': [{
-				'processCategoryName': str,
-				'defaultRate': float,
-				'defaultOverhead': float,
-				'defaultTP': float,
-				'unitsTP': str,
-				'defaultSetup': float
-				# 'averageRate': float,
-				# 'averageOverhead': float,
-				# 'averageTP': float,
-				# 'averageSetup': float
-				}],
-			'workCenter': [{
-				'workCenterID': int,
-				'workCenterName': str,
-				'processCategory': str,
-				'hourlyRate': float,
-				'hourlyOverhead': float,
-				'estimatedTP': float,
-				'estimatedSetup': float
-			}]
-		}
+engine = create_engine('sqlite:////home/michael/Documents/Coding/ASP/ASPCosting/test.db', echo=True)
 
-class Part(object):
-	def __init__(self):
-		self.Model = {
-			'partNumber': str,
-			'material': {
-				'materialType': str,
-				'materialName': str,
-				'materialDensity': float
-			},
-			'gauge': {
-				'gaugeName': str,
-				'gaugeThickness': float
-			},
-			'blank': {
-				'width': float,
-				'height': float,
-				'laserPath': float,
-				'weight': float
-			},
-			'partProcesses': [{
-				'operationNumber': int,
-				'operationName': str,
-				'processCategory': str,
-				'workCenterID': int,
-				'setup': float,
-				'operationTime': float,
-				'operationQuantity': int
-			}]
-		}
+Base = declarative_base()
+
+class MaterialType(Base):
+	__tablename__ = 'materialType'
+	id = Column(Integer, primary_key=True)
+	type = Column(String, unique=True)
+	material = relationship('Material', backref='materialType')
+
+class Material(Base):
+	__tablename__ = 'material'
+	id = Column(Integer, primary_key=True)
+	type = Column(String, ForeignKey('materialType.type'))
+	name = Column(String, unique=True)
+	density = Column(Float)
+
+class Gauge(Base):
+	__tablename__ = 'gauge'
+	id = Column(Integer, primary_key=True)
+	gauge = Column(Integer, unique=True)
+	thickness = Column(Float)
+
+class ProcessCategory(Base):
+	__tablename__ = 'processCategory'
+	id = Column(Integer, primary_key=True)
+	name = Column(String, unique=True)
+	rate = Column(Float)
+	overhead = Column(Float)
+	throughput = Column(Float)
+	setup = Column(Float)
+
+class WorkCenter(Base):
+	__tablename__ = 'workCenter'
+	id = Column(Integer, primary_key=True)
+	workCenterID = Column(Integer, unique=True)
+	name = Column(String, unique=True)
+	category = Column(String)
+	rate = Column(Float)
+	overhead = Column(Float)
+	throughput = Column(Float)
+	setup = Column(Float)
+
+Base.metadata.create_all(engine)
+
+
+# class Part(object):
+# 	def __init__(self):
+# 		self.Model = {
+# 			'partNumber': str,
+# 			'material': {
+# 				'materialType': str,
+# 				'materialName': str,
+# 				'materialDensity': float
+# 			},
+# 			'gauge': {
+# 				'gaugeName': str,
+# 				'gaugeThickness': float
+# 			},
+# 			'blank': {
+# 				'width': float,
+# 				'height': float,
+# 				'laserPath': float,
+# 				'weight': float
+# 			},
+# 			'partProcesses': [{
+# 				'operationNumber': int,
+# 				'operationName': str,
+# 				'processCategory': str,
+# 				'workCenterID': int,
+# 				'setup': float,
+# 				'operationTime': float,
+# 				'operationQuantity': int
+# 			}]
+# 		}
 
 # ref = Standards()
 # stuff = Standards()
