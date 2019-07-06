@@ -1,4 +1,5 @@
 from PyInquirer import prompt, Separator
+from bullet import Bullet, Check, YesNo, Input, ScrollBar, VerticalPrompt, Numbers, colors
 from sys import platform
 from os import system
 import time
@@ -11,7 +12,7 @@ from dxf import DXF
 
 
 spacing = '   '
-divider = '   ---------------'
+divider = '   ------------------'
 
 # UTILITIES
 
@@ -126,14 +127,12 @@ class View:
 
     def list(self, index):
         message = self.items[index]['message']
-        params = {
-            'type': 'list',
-            'name': 'list',
-            'message': message,
-            'choices': self.items[index]['elements']
-        }
-        answers = prompt(params, style=style_1)
-        return answers['list']
+        cli = ScrollBar(prompt = f'   {message}',
+            choices = self.items[index]['elements'],
+            pointer_color = colors.foreground['cyan'], 
+            margin = 2, height = 10) 
+        answers = cli.launch()
+        return answers
 
     def checkbox(self, index):
         itemsMod = []
@@ -153,13 +152,11 @@ class View:
         return answers['checkbox']
 
     def input(self, index):
-        params = {
-            'type': 'input',
-            'name': 'input',
-            'message': self.items[index]['elements']
-        }
-        answers = prompt(params, style=style_1)
-        return answers['input']
+        cli = Input(prompt = self.items[index]['elements'],
+                    word_color = colors.background['cyan'],
+                    indent = 3)
+        answers = cli.launch()
+        return answers
 
 
 ################################ LEVEL 1 ####################################
@@ -237,13 +234,15 @@ def cost_part():
             'elements': 'PART NUMBER: '}]
     partNo = View(title='PART COST MENU', version='input', 
         items=partNoItems)
+    
+    print(type(partNo.answer[0]))
 
     # MATERIAL
 
     # materialDF = Server().find('standards')['material'][0]
     # material = dfToList(materialDF, 'materialName')
 
-    matItems = [{'type': 'list', 'name': 'material', 'message': '',
+    matItems = [{'type': 'list', 'name': 'material', 'message': 'PART MATERIAL',
             'elements': ['carbon steel', 'stainless']}]
 
     mat = View(title='PART COST MENU', version='input', 
