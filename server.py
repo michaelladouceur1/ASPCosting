@@ -1,8 +1,32 @@
-import pymongo
-from pymongo import MongoClient
-from utilities import CheckType as ct
-import json
+from sqlalchemy import create_engine, Column, Integer, Float, String, ForeignKey
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, relationship, backref
 from pandas import DataFrame
+
+def connect(func):
+	def wrapper(*args, **kwargs):
+		engine = create_engine('sqlite:///test.db', echo=False)
+		Session = sessionmaker(engine)
+		session = Session()
+		print('connect wrapper')
+		data = func(session=session, *args, **kwargs)
+		session.close()
+		return data 
+	return wrapper
+
+@connect
+def query(table, mode, session, **kwargs):
+	if mode.lower() == 'first':
+		data = session.query(table).filter_by(**kwargs).first()
+	elif mode.lower() == 'all':
+		data = session.query(table).filter_by(**kwargs).all()
+	return data
+
+@connect
+def insert(*args, session):
+	print(f'insert: {args}')
+	session.add_all([item for item in args])
+	session.commit()
 
 class Server:
     def __init__(self):

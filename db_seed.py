@@ -1,45 +1,30 @@
-from model import MaterialType, Material
-import sqlalchemy
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from model import   MaterialType, Material, Gauge, ProcessCategory, WorkCenter
+from server import connect, insert, query
 
-engine = create_engine('sqlite:////home/michael/Documents/Coding/ASP/ASPCosting/test.db', echo=True)
+##### STANDARDS
 
-Session = sessionmaker(bind=engine)
-session = Session()
+materialType = [MaterialType('SHEET METAL'), 
+                MaterialType('BAR STOCK')]
 
-materialType = session.query(MaterialType).filter_by(type='SHEET METAL').first()
-material = Material()
-material.type = materialType
-material.name = 'STAINLESS STEEL'
-material.density = 3800
+material = [Material(materialType_id=materialType[0] ,materialType=materialType[0], name='CARBON STEEL', density=3800),
+            Material(materialType_id=materialType[1] ,materialType=materialType[1], name='STAINLESS STEEL', density=1200)]
 
-session.add(material)
-session.commit()
+gauge = [Gauge(gauge='18GA', thickness=0.048),
+        Gauge(gauge='16GA', thickness=0.06),
+        Gauge(gauge='12GA', thickness=0.105),]
 
+processCategory =    [ProcessCategory(name='Laser', rate=40, overhead=110, throughput=200, setup=0.15),
+                    ProcessCategory(name='Press Brake', rate=32, overhead=100, throughput=300, setup=0.25)]
 
+workCenter = [WorkCenter(workCenterID=11015, name='Prima Laser', category=processCategory[0], rate=42, overhead=120, throughput=200, setup=0.15)]
 
+# standards = [materialType, material, gauge, processCategory, workCenter]
 
+# insert(*materialType)
+insert(*gauge)
+insert(*processCategory)
+insert(*workCenter)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# standardsSeed = Standards().Model 
-# partSeed = Part().Model
 
 
 
