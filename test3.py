@@ -1,7 +1,10 @@
 from sqlalchemy import create_engine, Column, Integer, Float, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, backref
+<<<<<<< HEAD
 import sqlite3
+=======
+>>>>>>> sql
 
 
 Base = declarative_base()
