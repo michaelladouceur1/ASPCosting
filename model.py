@@ -8,38 +8,6 @@ Base = declarative_base()
 
 class MaterialType(Base):
 	__tablename__ = 'materialType'
-
-<<<<<<< HEAD
-	id = Column(Integer, primary_key=True)
-	name = Column(String)
-
-	def __init__(self, name):
-		self.name = name
-
-class Material(Base):
-	__tablename__ = 'material'
-
-	id = Column(Integer, primary_key=True)
-	materialType_id = Column(Integer, ForeignKey('materialType.id'))
-	materialType = relationship('MaterialType',
-								lazy='subquery',
-								backref=backref('materials'))
-	name = Column(String)
-	density = Column(Float)
-
-	def __init__(self, materialType_id, materialType, name, density):
-		self.materialType_id = materialType_id
-		self.materialType = materialType
-		self.name = name
-		self.density = density
-
-
-
-
-class MaterialType(Base):
-	__tablename__ = 'materialType'
-=======
->>>>>>> sql
 	id = Column(Integer, primary_key=True)
 	name = Column(String, unique=True)
 
