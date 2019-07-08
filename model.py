@@ -8,22 +8,9 @@ Base = declarative_base()
 
 class MaterialType(Base):
 	__tablename__ = 'materialType'
-<<<<<<< Updated upstream
-	id = Column(Integer, primary_key=True)
-	type = Column(String, unique=True)
-	material = relationship('Material', backref='materialType')
 
-class Material(Base):
-	__tablename__ = 'material'
 	id = Column(Integer, primary_key=True)
-	type = Column(String, ForeignKey('materialType.type'))
 	name = Column(String, unique=True)
-	density = Column(Float)
-
-=======
-
-	id = Column(Integer, primary_key=True)
-	name = Column(String)
 
 	def __init__(self, name):
 		self.name = name
@@ -45,7 +32,6 @@ class Material(Base):
 		self.name = name
 		self.density = density
 
->>>>>>> Stashed changes
 class Gauge(Base):
 	__tablename__ = 'gauge'
 
