@@ -46,3 +46,11 @@ def dfToList(df, category):
 	for item in df:
 		arr.append(item[category])
 	return arr
+
+def outputList(data, *args):
+	list = []
+	for item in data:
+		for i in args:
+			# print(getattr(item, i))
+			list.append(getattr(item, i))
+	return list

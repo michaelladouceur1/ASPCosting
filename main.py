@@ -4,11 +4,11 @@ from sys import platform
 from os import system
 import time
 
-from utilities import zipDictAndListToDict, dfToList
+from utilities import zipDictAndListToDict, dfToList, outputList
 from style import style_1
-from server import Server
-# from test import HotKeys
+from server import query, insert
 from dxf import DXF
+from model import Standards
 
 
 spacing = '   '
@@ -99,7 +99,7 @@ class View:
             elif item['type'] == 'checkbox':
                 self.answer.append(self.checkbox(index))
             elif item['type'] == 'input':
-                self.answer.append(self.input(index))
+                self.answer.append(self.input(index).upper())
             else:
                 print('ERROR')
                 continue
@@ -121,7 +121,7 @@ class View:
 
     def printData(self, index):
         for data in self.items[index]['elements']:
-            print(f'  {data}')
+            print(f'   {data}')
 
     # TEMPLATE MENU ITEMS
 
@@ -170,8 +170,6 @@ def main_menu():
                         routeElements['editCosting'], 
                         routeElements['analytics'],
                         routeElements['maintenance']]}])
-    
-    print(v)
 
 ################################ LEVEL 2 ####################################
 
@@ -370,11 +368,8 @@ def add_work_center():
     maintenance()
 
 def add_proccess_category():
-    data = Server().find('standards')['processCategory'][0]
-    print(data)
-    elements = []
-    for item in data:
-        elements.append(item['processCategoryName'])
+    data = query(Standards.ProcessCategory, 'all', order=Standards.ProcessCategory.name)
+    elements = outputList(data, 'name')
     items = [{'type': 'print', 'name': 'processes',
             'elements': elements},
             {'type': 'input', 'name': 'processCategoryName',
@@ -392,10 +387,13 @@ def add_proccess_category():
     v = View(title='ADD PROCESS CATEGORY', version='input',
         items=items)
 
-    data = zipDictAndListToDict(items, v.answer)
-    print(type(data))
+    processCategory = Standards.ProcessCategory(name=v.answer[0],
+                                                rate=v.answer[1],
+                                                overhead=v.answer[2],
+                                                throughput=v.answer[3],
+                                                setup=v.answer[5])
 
-    Server().updateOne('standards', 'push', 'processCategory', data)
+    insert(processCategory)
 
     maintenance()
 
@@ -411,7 +409,8 @@ def add_material_standards():
 ################################ LEVEL 4 ####################################
 
 def add_material_type():
-    elements = Server().find('standards')['materialType'][0]
+    data = query(Standards.MaterialType, 'all')
+    elements = outputList(data, 'name')
     items = [{'type': 'print', 'name': 'materialTypes',
             'elements': elements},
             {'type': 'input', 'name': 'materialType',
@@ -419,16 +418,16 @@ def add_material_type():
     v = View(title='ADD MATERIAL TYPE', version='input',
         items=items)
 
-    Server().updateOne('standards', 'push', 'materialType', v.answer[0].upper())
+    materialType = Standards.MaterialType(name=v.answer[0])
+    insert(materialType)
 
     add_material_standards()
 
 def add_material():
-    data = Server().find('standards')['material'][0]
-    materialType = Server().find('standards')['materialType'][0]
-    material = []
-    for item in data:
-        material.append(item['materialName'])
+    data = query(Standards.Material, 'all')
+    material = outputList(data, 'name')
+    data = query(Standards.MaterialType, 'all')
+    materialType = outputList(data, 'name')
     items = [{'type': 'print', 'name': 'material',
             'elements': material},
             {'type': 'list', 'name': 'materialType', 'message': 'MATERIAL TYPE: ',
@@ -440,17 +439,23 @@ def add_material():
     v = View(title='ADD MATERIAL', version='input',
         items=items)
 
-    data = zipDictAndListToDict(items, v.answer)
+    materialType = query(Standards.MaterialType, 'first', name=v.answer[0])
+    material = Standards.Material(materialType_id=materialType, 
+                        materialType=materialType, 
+                        name=v.answer[1], 
+                        density=v.answer[2])
 
-    Server().updateOne('standards', 'push', 'material', data)
+    insert(material)
 
     add_material_standards()
 
 def add_gauge():
-    data = Server().find('standards')['gauge'][0]
+    data = query(Standards.Gauge, 'all', order=Standards.Gauge.thickness)
+    name = outputList(data, 'gauge')
+    thick = outputList(data, 'thickness')
     gauge = []
-    for item in data:
-        gauge.append(f'{item["gaugeName"]} : {item["gaugeThickness"]}')
+    for i, j in zip(name, thick):
+        gauge.append(f'{i} : {j}')
     items = [{'type': 'print', 'name': 'material',
             'elements': gauge},
             {'type': 'input', 'name': 'gaugeName',
@@ -460,9 +465,8 @@ def add_gauge():
     v = View(title='ADD MATERIAL', version='input',
         items=items)
 
-    data = zipDictAndListToDict(items, v.answer)
-
-    Server().updateOne('standards', 'push', 'gauge', data)
+    gauge = Standards.Gauge(gauge=v.answer[0], thickness=v.answer[1])
+    insert(gauge)
 
     add_material_standards()
 
