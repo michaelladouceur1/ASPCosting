@@ -6,7 +6,7 @@ from model import Standards
 
 def connect(func):
     def wrapper(*args, **kwargs):
-        engine = create_engine('sqlite:///test.db', echo=False)
+        engine = create_engine('sqlite:///test2.db', echo=False)
         Session = sessionmaker(engine)
         session = Session()
         data = func(session=session, *args, **kwargs)

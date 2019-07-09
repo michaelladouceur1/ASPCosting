@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, Column, String, Integer, Float, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
-engine = create_engine('sqlite:///test.db', echo=False)
+engine = create_engine('sqlite:///test2.db', echo=False)
 
 Base = declarative_base()
 

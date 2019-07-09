@@ -340,10 +340,8 @@ def cost_product_family():
 #### MAINTENANCE
 
 def add_work_center():
-    processCategory = Server().find('standards')['processCategory'][0]
-    elements = []
-    for item in processCategory:
-        elements.append(item['processCategoryName'])
+    data = query(Standards.ProcessCategory, 'all', order=Standards.ProcessCategory.name)
+    elements = outputList(data, 'name')
     items = [{'type': 'input', 'name': 'workCenterID',
             'elements': 'WORK CENTER ID NUMBER: '},
             {'type': 'input', 'name': 'workCenterName',
@@ -361,9 +359,15 @@ def add_work_center():
     v = View(title='ADD PROCESS MENU', version='input',
         items=items)
 
-    data = zipDictAndListToDict(items, v.answer)
+    workCenter = Standards.WorkCenter(workCenterID=v.answer[0],
+                                    name=v.answer[1],
+                                    category=v.answer[2],
+                                    rate=v.answer[3],
+                                    overhead=v.answer[4],
+                                    throughput=v.answer[5],
+                                    setup=v.answer[6])
 
-    Server().updateOne('standards', 'push', 'workCenter', data)
+    insert(workCenter)
 
     maintenance()
 
