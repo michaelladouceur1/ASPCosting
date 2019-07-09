@@ -65,7 +65,10 @@ class WorkCenter(Base):
 	id = Column(Integer, primary_key=True)
 	workCenterID = Column(Integer, unique=True)
 	name = Column(String, unique=True)
-	category = Column(String)
+	category_id = Column(Integer, ForeignKey('processCategory.id'))
+	category = relationship('ProcessCategory',
+							lazy='subquery',
+							backref=backref('categories'))
 	rate = Column(Float)
 	overhead = Column(Float)
 	throughput = Column(Float)
