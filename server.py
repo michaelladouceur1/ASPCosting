@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from pandas import DataFrame
 from model import Standards
+import time
 
 def connect(func):
     def wrapper(*args, **kwargs):
@@ -25,6 +26,7 @@ def query(table, mode, session, order=None, **kwargs):
 @connect
 def insert(*args, session):
     print(f'insert: {args}')
+    time.sleep(4)
     session.add_all([item for item in args])
     session.commit()
 
