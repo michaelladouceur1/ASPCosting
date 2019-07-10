@@ -10,3 +10,6 @@ function setVal(item) {
     eel.setValue(table, values);
 };
 
+function loadSelect(classSelect) {
+	
+}
