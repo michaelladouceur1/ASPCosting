@@ -2,8 +2,11 @@
 <html>
 <head>
 	<title>ASP & Richards-Wilcox Costing</title>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+	  rel="stylesheet">
 	<!-- BOOTSTRAP CSS -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="style.css">
 	<!-- BOOTSTRAP JS -->
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -13,32 +16,147 @@
 </head>
 <body>
 	<div class="container-fluid">
-		<div class="materialTypeInput card">
-			<div class="card-header">
-				Material Type
+		<div class="row">
+			<div class="col-md-4">
+				<div class="materialTypeInput card">
+					<div class="card-header">
+						<div class="row">
+							<div class="col-11">
+								<h4>Material Type</h4>
+							</div>
+							<div class="col-1">
+								<a href="#" data-toggle="modal" data-target="#materialTypeInputModal"><i class="material-icons">add_box</i></a>
+							</div>
+						</div>
+					</div>
+					<div class="card-body">
+						<table class="table table-sm">
+							<thead>
+								<tr>
+									<th>Material Type Name</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>Sheet Metal</td>
+									<td><a href="#"><i class="material-icons">settings</i></a></td>
+								</tr>
+								<tr>
+									<td>Bar Stock</td>
+									<td><a href="#"><i class="material-icons">settings</i></a></td>
+								</tr>
+								<tr>
+									<td>Plastic</td>
+									<td><a href="#"><i class="material-icons">settings</i></a></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
 			</div>
-			<div class="card-body">
-				<label>Material Type</label>
-				<input class="MaterialType" type="text" name="name">
-				<button onclick="setVal('.MaterialType')">Submit</button>
+			<div class="col-md-8">
+				<div class="materialInput card">
+					<div class="card-header">
+						<div class="row">
+							<div class="col-11">
+								<h4>Material</h4>
+							</div>
+							<div class="col-1">
+								<a href="#" data-toggle="modal" data-target="#materialInputModal"><i class="material-icons">add_box</i></a>
+							</div>
+						</div>
+					</div>
+					<div class="card-body">
+						<table class="table table-sm">
+							<thead>
+								<tr>
+									<th>Material Type</th>
+									<th>Material Name</th>
+									<th>Material Density</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody id="materialTable">
+								<tr>
+									<td>Sheet Metal</td>
+									<td>Carbon Steel</td>
+									<td>3800</td>
+									<td><a href="#"><i class="material-icons">settings</i></a></td>
+								</tr>
+								<tr>
+									<td>Bar Stock</td>
+									<td>Stainless Steel</td>
+									<td>4000</td>
+									<td><a href="#"><i class="material-icons">settings</i></a></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
-		<div class="materialInput card">
-			<div class="card-header">
-				Material
+	</div>
+
+	<!-- MODALS -->
+
+	<!-- MATERIAL TYPE MODAL -->
+	<div class="modal fade" id="materialTypeInputModal" tabindex="-1" role="dialog" aria-labelledby="materialTypeInputLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title" id="materialTypeInputLabel">Add Material Type</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<input class="MaterialType" type="text" name="name" placeholder="Material Type">
+				</div>
+				<div class="modal-footer">
+					<button class="btn" onclick="setVal('.MaterialType')">Submit</button>
+				</div>
 			</div>
-			<div class="card-body">
-				<label>Material Type</label>
-				<select class="Material form-control" name="materialType" onload="loadSelect('MaterialType')">
-					<option value="SM">Sheet Metal</option>
-					<option value="BS">Bar Stock</option>
-					<option value="PL">Plastic</option>
-				</select>
-				<label>Material Name</label>
-				<input class="Material" type="text" name="name">
-				<label>Material Density</label>
-				<input class="Material" type="text" name="density">
-				<button onclick="setVal('.Material')">Submit</button>
+		</div>
+	</div>
+
+	<!-- MATERIAL MODAL -->
+	<div class="modal fade" id="materialInputModal" tabindex="-1" role="dialog" aria-labelledby="materialInputLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title" id="materialInputLabel">Add Material</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<label>Material Type</label>
+					</div>
+					<div class="row">
+						<select class="Material form-control" name="materialType" onload="loadSelect('MaterialType')">
+							<option value="SM">Sheet Metal</option>
+							<option value="BS">Bar Stock</option>
+							<option value="PL">Plastic</option>
+						</select>
+					</div>
+					<div class="row">
+						<label>Material Name</label>
+					</div>
+					<div class="row">
+						<input class="Material" type="text" name="name">
+					</div>
+					<div class="row">
+						<label>Material Density</label>
+					</div>
+					<div class="row">
+						<input class="Material" type="text" name="density">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn" onclick="setVal('.Material')">Submit</button>
+				</div>
 			</div>
 		</div>
 	</div>
