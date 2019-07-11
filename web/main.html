@@ -22,10 +22,12 @@
 					<div class="card-header">
 						<div class="row">
 							<div class="col-11">
-								<h4>Material Type</h4>
+								<h4 id="log">Material Type</h4>
 							</div>
 							<div class="col-1">
-								<a href="#" data-toggle="modal" data-target="#materialTypeInputModal"><i class="material-icons">add_box</i></a>
+								<a href="#" data-toggle="modal" data-target="#materialTypeInputModal">
+									<i class="material-icons">add_box</i>
+								</a>
 							</div>
 						</div>
 					</div>
@@ -37,19 +39,24 @@
 									<th></th>
 								</tr>
 							</thead>
-							<tbody>
-								<tr>
+							<tbody id="materialTypeTable">
+<!-- 								<tr>
 									<td>Sheet Metal</td>
-									<td><a href="#"><i class="material-icons">settings</i></a></td>
-								</tr>
-								<tr>
+									<td>
+										<a href="#"><i class="material-icons">settings</i></a>
+										<button type="button" class="close" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</td>
+								</tr> -->
+								<!-- <tr>
 									<td>Bar Stock</td>
 									<td><a href="#"><i class="material-icons">settings</i></a></td>
 								</tr>
 								<tr>
 									<td>Plastic</td>
 									<td><a href="#"><i class="material-icons">settings</i></a></td>
-								</tr>
+								</tr> -->
 							</tbody>
 						</table>
 					</div>
@@ -63,7 +70,9 @@
 								<h4>Material</h4>
 							</div>
 							<div class="col-1">
-								<a href="#" data-toggle="modal" data-target="#materialInputModal"><i class="material-icons">add_box</i></a>
+								<a href="#" data-toggle="modal" data-target="#materialInputModal">
+									<i class="material-icons">add_box</i>
+								</a>
 							</div>
 						</div>
 					</div>
