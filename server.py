@@ -26,7 +26,6 @@ def query(table, mode, session, order=None, **kwargs):
 @connect
 def insert(*args, session):
     print(f'insert: {args}')
-    time.sleep(4)
     session.add_all([item for item in args])
     session.commit()
 

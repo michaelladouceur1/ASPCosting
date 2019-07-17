@@ -21,15 +21,16 @@ class Standards:
 
 		id = Column(Integer, primary_key=True)
 		materialType_id = Column(Integer, ForeignKey('materialType.id'))
-		materialType = relationship('MaterialType',
+		materialType_name = relationship('MaterialType',
 									lazy='subquery',
-									backref=backref('materials'))
+									backref=backref('materials',
+									cascade='all,delete'))
 		name = Column(String)
 		density = Column(Float)
 
-		def __init__(self, materialType_id, materialType, name, density):
+		def __init__(self, materialType_id, materialType_name, name, density):
 			self.materialType_id = materialType_id
-			self.materialType = materialType
+			self.materialType_name = materialType_name
 			self.name = name
 			self.density = density
 

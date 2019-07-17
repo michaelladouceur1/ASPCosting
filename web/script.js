@@ -6,36 +6,58 @@ function setVal(item) {
         values[$(items[i]).attr('name')] = ($(items[i]).val())
     };
     eel.setValue(table, values);
-    eel.loadTable('materialType', ['name'])
+    eel.loadTable(table, Object.keys(values));
 };
 
 eel.expose(loadTable);
-function loadTable(items, selector) {
+function loadTable(items, table) {
+    selector = '#' + table + 'Table';
 	$(selector).empty()
-	index = 0;
-	items.forEach((item) => {
-		$(selector).append(
-    	'<tr>' +
-    		'<td>' + item + '</td>' +
-    		'<td>' +
-    			'<a href="#"><i class="material-icons">settings</i></a>' +
-    			'<button type="button" class="delete" aria-label="Close">' +
-					'<span aria-hidden="true">&times;</span>' +
-				'</button>' +
-    		'</td>' +
-    	'</tr>'
-    	);
+	Object.keys(items).forEach((key) => {
+        values = ''
+        Object.values(items[key]).forEach((item) => {
+            values += '<td>' + item + '</td>';
+        });
+        $(selector).append(
+        '<tr class="' + table +'-' + key +'">' +
+            values +
+            '<td>' +
+                '<a href="#"><i class="material-icons">settings</i></a>' +
+                '<button type="button" class="close" aria-label="Close">' +
+                    '<span aria-hidden="true">&times;</span>' +
+                '</button>' +
+            '</td>' +
+        '</tr>'
+        );
 	});
 };
 
+eel.expose(loadSelect);
+function loadSelect(items, table) {
+    console.log('JS LOADSELECT');
+    selector = '#' + table + 'Select';
+    $(selector).empty()
+    Object.keys(items).forEach((key) => {
+        values = ''
+        Object.values(items[key]).forEach((item) => {
+            values += '<option class="' + table + '-' + key + '" value="' + item + '">' + item +'</option>';
+        });
+        $(selector).append(values);
+	});
+}
+
 function deleteTableItem(target) {
-	$(target).closest('tr').remove()
+    rowClass = $(target).closest('tr').attr('class');
+    collection = rowClass.split('-')[0];
+    id = rowClass.split('-')[1];
+    eel.removeValue(collection, id=id);
+	$(target).closest('tr').remove();
 }
 
 eel.expose(init);
 function init() {
 	$(document).ready(function() {
-		$(".delete").click(function(event) {
+		$(".close").click(function(event) {
 			deleteTableItem(event.target);
 		});
 	});

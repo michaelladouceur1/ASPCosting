@@ -4,11 +4,11 @@ from server import connect, insert, query
 
 ##### STANDARDS
 
-materialType = [Standards.MaterialType('SHEET METAL'), 
-                Standards.MaterialType('BAR STOCK')]
+materialType = [Standards.MaterialType(name='SHEET METAL'), 
+                Standards.MaterialType(name='BAR STOCK')]
 
-material = [Standards.Material(materialType_id=materialType[0] ,materialType=materialType[0], name='CARBON STEEL', density=3800),
-            Standards.Material(materialType_id=materialType[1] ,materialType=materialType[1], name='STAINLESS STEEL', density=1200)]
+material = [Standards.Material(materialType_id=materialType[0] ,materialType_name=materialType[0], name='CARBON STEEL', density=3800),
+            Standards.Material(materialType_id=materialType[1] ,materialType_name=materialType[1], name='STAINLESS STEEL', density=1200)]
 
 gauge = [Standards.Gauge(gauge='18GA', thickness=0.048),
         Standards.Gauge(gauge='16GA', thickness=0.06),

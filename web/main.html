@@ -39,7 +39,7 @@
 									<th></th>
 								</tr>
 							</thead>
-							<tbody id="materialTypeTable">
+							<tbody id="MaterialTypeTable">
 <!-- 								<tr>
 									<td>Sheet Metal</td>
 									<td>
@@ -86,8 +86,8 @@
 									<th></th>
 								</tr>
 							</thead>
-							<tbody id="materialTable">
-								<tr>
+							<tbody id="MaterialTable">
+								<!-- <tr>
 									<td>Sheet Metal</td>
 									<td>Carbon Steel</td>
 									<td>3800</td>
@@ -98,7 +98,7 @@
 									<td>Stainless Steel</td>
 									<td>4000</td>
 									<td><a href="#"><i class="material-icons">settings</i></a></td>
-								</tr>
+								</tr> -->
 							</tbody>
 						</table>
 					</div>
@@ -144,10 +144,7 @@
 						<label>Material Type</label>
 					</div>
 					<div class="row">
-						<select class="Material form-control" name="materialType" onload="loadSelect('MaterialType')">
-							<option value="SM">Sheet Metal</option>
-							<option value="BS">Bar Stock</option>
-							<option value="PL">Plastic</option>
+						<select class="Material form-control" id="MaterialTypeSelect" name="materialType_name" onload="loadSelect('MaterialType')">
 						</select>
 					</div>
 					<div class="row">

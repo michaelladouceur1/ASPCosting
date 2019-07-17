@@ -14,6 +14,10 @@ eel.init();
 def setValue(table, value):
 	insert(table, value)
 
+@eel.expose
+def removeValue(table, id):
+	remove(table=table, id=id)
+
 def connect(func):
 	def wrapper(*args, **kwargs):
 		engine = create_engine('sqlite:///test2.db', echo=False)
@@ -25,11 +29,13 @@ def connect(func):
 
 @connect
 def query(table, mode, session, order=None, **kwargs):
-	print(f'query: {table}')
+	# print(f'query: {table} (type: {type(table)}')
 	if mode.lower() == 'first':
 		data = session.query(table).filter_by(**kwargs).first()
 	elif mode.lower() == 'all':
 		data = session.query(table).filter_by(**kwargs).order_by(order).all()
+	elif mode.lower() == 'delete':
+		data = session.query(table).filter_by(**kwargs).first().delete()
 	return data
 
 @connect
@@ -39,36 +45,62 @@ def insert(table, values, session):
 	session.add(data)
 	session.commit()
 
-def outputList(data, items):
-	print('output list')
+@connect
+def remove(table, id, session):
+	data = session.query(getattr(Standards, table)).filter_by(id=id).first()
+	print(data)
+	session.delete(data)
+	session.commit()
+
+def outputDict(data, items):
+	obj = {}
 	list = []
 	for item in data:
+		id = getattr(item, 'id')
+		# print(f'\nitem: {item}')
+		obj[id] = {}
 		for i in items:
-			# print(getattr(item, i))
-			list.append(getattr(item, i))
-	print(list)
-	return list
+			att = getattr(item, i)
+			print(f'{i} : {type(att)}')
+			if not isinstance(att, (str, int, float)):
+				print(f'(EDITED ATT){i} : {att}')
+				ni = i.split('_')[1]
+				obj[id][i] = getattr(att, ni)
+			else:
+				# print(f'{i} : {att}')
+				obj[id][i] = getattr(item, i)
+	print(f'\n{obj}')
+	return obj
+
+def loadCollData(table, items):
+	data = tables(table)
+	collection = data[0]
+	mode = data[1]
+	order = data[2]
+	data = query(collection, mode, order=order)
+	# print(data)
+	data = outputDict(data, items)
+	return data
 
 @eel.expose
 def loadTable(table, items):
-	data = tables(table)
-	table = data[0]
-	mode = data[1]
-	order = data[2]
-	selector = data[3]
-	data = query(table, mode, order=order)
-	data = outputList(data, items)
-	print('calling loadTable()')
-	eel.loadTable(data, selector)
+	data = loadCollData(table, items)
+	eel.loadTable(data, table)
+
+@eel.expose 
+def loadSelect(table, items):
+	data = loadCollData(table, items)
+	print('LOADSELECT()')
+	eel.loadSelect(data, table)
 
 def tables(name):
 	tables = {
-		'materialType': [Standards.MaterialType, 'all', Standards.MaterialType.name, '#materialTypeTable'],
-		'material': [Standards.Material, 'all', Standards.Material.name, '#materialTypeTable']
+		'MaterialType': [Standards.MaterialType, 'all', Standards.MaterialType.name],
+		'Material': [Standards.Material, 'all', Standards.Material.name]
 	}
-	print(tables[name])
 	return tables[name]
 
-loadTable('materialType',['name'])
-# loadTable('material',['materialType','name','density'])
+loadTable('Material',['materialType_name','name','density'])
+loadTable('MaterialType',['name'])
+loadSelect('MaterialType', ['name'])
 eel.start('main.html', size=(1000,600))
